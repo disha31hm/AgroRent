@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroRent - Booking History</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background: #28a745;
+            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .booking-card {
+            background: white;
+            border: 2px solid #28a745;
+            margin: 10px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .equipment-name {
+            color: #28a745;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .detail {
+            margin: 5px 0;
+            font-size: 1.1em;
+        }
+        .amount {
+            color: #dc3545;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .status {
+            background: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2em;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚜 AgroRent - Your Booking History</h1>
+        <p>View all your equipment bookings</p>
+    </div>
+    
+    <div id="content">
+        <div class="loading">Loading your bookings...</div>
+    </div>
+
+    <script>
+        // Immediate execution
+        (function() {
+            console.log('Starting to load bookings...');
+            
+            fetch('http://127.0.0.1:5000/api/bookings?user_id=4')
+            .then(response => {
+                console.log('Response received, status:', response.status);
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status);
+                }
+                return response.json();
+            })
+            .then(bookings => {
+                console.log('Bookings data:', bookings);
+                displayBookings(bookings);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('content').innerHTML = 
+                    '<div class="error">Error loading bookings: ' + error.message + '</div>';
+            });
+        })();
+        
+        function displayBookings(bookings) {
+            const content = document.getElementById('content');
+            
+            if (!bookings || bookings.length === 0) {
+                content.innerHTML = '<div class="loading">No bookings found. Make your first booking!</div>';
+                return;
+            }
+            
+            let html = '<h2>Found ' + bookings.length + ' bookings:</h2>';
+            
+            bookings.forEach(function(booking, index) {
+                html += '<div class="booking-card">';
+                html += '<div class="equipment-name">' + (booking.equipment_name || 'Unknown Equipment') + '</div>';
+                html += '<div class="detail"><strong>📅 Date:</strong> ' + booking.start_date + ' to ' + booking.end_date + '</div>';
+                html += '<div class="detail"><strong>📍 Location:</strong> ' + (booking.equipment_location || 'N/A') + '</div>';
+                html += '<div class="detail"><strong>💰 Amount:</strong> <span class="amount">₹' + (booking.total_cost || booking.amount || 0) + '</span></div>';
+                html += '<div class="detail"><strong>💳 Payment:</strong> ' + (booking.payment_method || 'N/A') + '</div>';
+                html += '<div class="detail"><strong>📋 Status:</strong> <span class="status">' + (booking.status || 'Confirmed') + '</span></div>';
+                html += '<div class="detail"><strong>🆔 Booking ID:</strong> #' + (booking.booking_id || index + 1) + '</div>';
+                html += '</div>';
+            });
+            
+            content.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

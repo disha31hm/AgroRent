@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking History Test</title>
+</head>
+<body>
+    <h1>Booking History Test Page</h1>
+    <div id="results"></div>
+    <button onclick="testAPI()">Test API Call</button>
+    
+    <script>
+        async function testAPI() {
+            console.log('Testing API call...');
+            const resultsDiv = document.getElementById('results');
+            
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/bookings?user_id=4');
+                console.log('Response status:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('API Response data:', data);
+                    resultsDiv.innerHTML = '<h2>Success!</h2><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                } else {
+                    resultsDiv.innerHTML = '<h2>Error:</h2><p>Response status: ' + response.status + '</p>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                resultsDiv.innerHTML = '<h2>Error:</h2><p>' + error.message + '</p>';
+            }
+        }
+        
+        // Auto-test on page load
+        window.onload = function() {
+            console.log('Page loaded, testing API...');
+            testAPI();
+        };
+    </script>
+</body>
+</html>

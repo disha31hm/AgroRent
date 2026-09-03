@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-key="title">AgroRent Account</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@400;700&display=swap" rel="stylesheet" />
+  <script src="https://kit.fontawesome.com/906faa9c3f.js" crossorigin="anonymous"></script>
+
+  <!-- Leaflet (to match addequipment page UX) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <style>
+    :root {
+      --primary-green: #173c1c;
+      --soft-earth-tone: #e8f5e9;
+      --accent-orange: #FFA500;
+      --text-dark: #173c1c;
+      --text-light: #fff;
+      --danger: #dc3545;
+    }
+
+    body {
+      font-family: 'Poppins', 'Noto Sans Kannada', sans-serif;
+      margin: 0;
+      color: var(--text-dark);
+      background: var(--soft-earth-tone);
+      line-height: 1.8;
+      min-height: 100vh
+    }
+
+    .hidden {
+      display: none !important
+    }
+
+    header {
+      background: #fff;
+      color: var(--text-dark);
+      padding: 1.5rem 20px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      height: 50px;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, .2)
+    }
+
+    .header-logo-text img {
+      height: 70px;
+      margin-left: 40px
+    }
+
+    .desktop-nav {
+      display: none;
+      flex-grow: 1;
+      justify-content: center;
+      gap: 30px
+    }
+
+    @media (min-width:768px) {
+      .desktop-nav {
+        display: flex
+      }
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: var(--text-dark);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1.3rem;
+      position: relative;
+      transition: color .3s;
+      margin-right: 15px
+    }
+
+    .nav-link:hover {
+      color: var(--primary-green)
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 4px;
+      background: #173c1c;
+      border-radius: 2px;
+      transition: width .3s ease, left .3s ease
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+      left: 0
+    }
+
+    .desktop-search-container {
+      display: none;
+      width: 25%;
+      align-items: center;
+      gap: 15px;
+      margin-right: 40px
+    }
+
+    @media (min-width:768px) {
+      .desktop-search-container {
+        display: flex
+      }
+    }
+
+    .desktop-search-bar {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      height: 40px;
+      gap: .5rem;
+      background: #f3f4f6;
+      border-radius: 9999px;
+      padding: .5rem 1rem;
+      border: 1px solid #e5e7eb
+    }
+
+    .desktop-search-bar input {
+      background: transparent;
+      font-size: 1.3rem;
+      border: none;
+      outline: none;
+      width: 100%;
+      color: var(--text-dark)
+    }
+
+    .location-detector-btn {
+      width: 20%;
+      background: none;
+      border: none;
+      color: var(--accent-orange);
+      padding: .5rem;
+      margin-left: 20px;
+      border-radius: 50%;
+      cursor: pointer
+    }
+
+    .mobile-header-group {
+      display: flex;
+      align-items: center;
+      gap: 1rem
+    }
+
+    .mobile-menu-button {
+      background: none;
+      border: none;
+      color: var(--primary-green);
+      cursor: pointer
+    }
+
+    @media (min-width:768px) {
+      .mobile-menu-button {
+        display: none
+      }
+    }
+
+    .mobile-nav-menu {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      padding: 1rem 0;
+      border-top: 1px solid rgba(0, 0, 0, .1);
+      margin-top: 10px
+    }
+
+    .mobile-nav-menu a {
+      padding: .5rem 1rem;
+      color: var(--text-dark);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1.1rem
+    }
+
+    .mobile-search-container {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .5rem 1rem;
+      background: #f3f4f6;
+      border-radius: 9999px;
+      border: 1px solid #e5e7eb
+    }
+
+    .mobile-search-container input {
+      background: transparent;
+      border: none;
+      outline: none;
+      width: 100%;
+      color: var(--text-dark)
+    }
+
+    .user-menu-dropdown-container {
+      position: relative;
+      width: 5%
+    }
+
+    .user-menu-button {
+      background: var(--soft-earth-tone);
+      border: none;
+      color: var(--primary-green);
+      padding: .5rem;
+      border-radius: 50%;
+      cursor: pointer
+    }
+
+    .user-dropdown {
+      position: absolute;
+      top: 112%;
+      right: 0;
+      margin-top: 10px;
+      width: 350px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, .1);
+      z-index: 10
+    }
+
+    .lang-switcher-container {
+      padding: 10px;
+      width: 50%;
+      margin: 0 auto
+    }
+
+    .lang-switcher {
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--text-dark);
+      border-radius: 15px;
+      overflow: hidden
+    }
+
+    .lang-switcher button {
+      background: none;
+      border: none;
+      color: var(--text-dark);
+      padding: 15px 18px 10px;
+      cursor: pointer;
+      font-family: 'Noto Sans Kannada', sans-serif;
+      font-size: 1.2rem;
+      flex: 1
+    }
+
+    .lang-switcher button.active {
+      background: var(--primary-green);
+      color: #fff;
+      font-weight: 700
+    }
+
+    .user-dropdown-link {
+      display: block;
+      padding: 15px;
+      margin-left: 10px;
+      font-size: 1.5rem;
+      font-weight: 500;
+      text-decoration: none;
+      color: var(--text-dark)
+    }
+
+    .logout-btn {
+      background: #173c1c;
+      margin: 0 auto;
+      color: #fff;
+      border-radius: 15px;
+      height: 50px;
+      width: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px
+    }
+
+    .main-content {
+      padding: 0 1rem 1rem;
+      max-width: 1500px;
+      margin: 0 auto 20px
+    }
+
+    .section-heading {
+      font-size: 2.8rem;
+      color: var(--primary-green);
+      margin: 1rem auto 2rem;
+      text-align: center
+    }
+
+    .profile-card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, .1);
+      border: 1px solid var(--primary-green);
+      padding: 2rem;
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center
+    }
+
+    .profile-image-container {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid var(--primary-green);
+      margin-bottom: 1rem
+    }
+
+    .profile-image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover
+    }
+
+    .edit-details-btn {
+      background: var(--primary-green);
+      color: #fff;
+      padding: .75rem 1.5rem;
+      border-radius: 5px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 2rem 0
+    }
+
+    .tab-btn {
+      background: #fff;
+      color: var(--text-dark);
+      padding: 1rem 2rem;
+      border-radius: 5px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      border: 1px solid var(--primary-green);
+      cursor: pointer
+    }
+
+    .tab-btn.active {
+      background: var(--primary-green);
+      color: #fff
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem
+    }
+
+    .equipment-card {
+      background: var(--soft-earth-tone);
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, .1);
+      position: relative
+    }
+
+    .no-content-message {
+      text-align: center;
+      padding: 4rem 2rem;
+      font-size: 1.5rem;
+      color: #6b7280
+    }
+
+    footer {
+      width: 100%;
+      background: var(--primary-green);
+      color: #fff;
+      text-align: center;
+      padding: 20px 0 5px
+    }
+
+    .legal-links p {
+      font-size: 1.3rem;
+      color: #fff;
+      border-top: 1px solid rgba(255, 255, 255, .2);
+      padding-top: 10px;
+      margin-top: 5px
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000
+    }
+
+    .modal {
+      background: #fff;
+      width: 95%;
+      max-width: 900px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .3);
+      overflow: hidden
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      background: var(--primary-green);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between
+    }
+
+    .modal-body {
+      padding: 20px
+    }
+
+    .modal-footer {
+      padding: 16px 20px;
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      border-top: 1px solid #eee
+    }
+
+    .form-row {
+      display: flex;
+      gap: 12px
+    }
+
+    .form-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 12px
+    }
+
+    .form-group label {
+      font-weight: 600;
+      margin-bottom: 6px
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cfd8dc;
+      border-radius: 8px;
+      font-size: 1rem;
+      background: #f3f4f6
+    }
+
+    .img-preview {
+      width: 140px;
+      height: 140px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 2px solid var(--primary-green)
+    }
+
+    .btn {
+      border: none;
+      cursor: pointer;
+      padding: .7rem 1.2rem;
+      border-radius: 8px;
+      font-weight: 700
+    }
+
+    .btn-primary {
+      background: var(--primary-green);
+      color: #fff
+    }
+
+    .btn-secondary {
+      background: #eceff1;
+      color: #37474f
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: #fff
+    }
+
+    .help {
+      font-size: .9rem;
+      color: #546e7a
+    }
+
+    /* --- Modal sizing & scrolling fixes --- */
+    .modal-backdrop {
+      padding: 24px;
+      /* keeps space around the modal so you can see shadow */
+      align-items: flex-start;
+      /* allows tall modals to start at top */
+      overflow: auto;
+      /* page can scroll if needed */
+    }
+
+    @media (max-width: 768px) {
+      .modal-backdrop {
+        padding: 0;
+      }
+
+      /* mobile: edge-to-edge */
+    }
+
+    .modal {
+      width: min(900px, 96vw);
+      max-height: 92vh;
+      /* never taller than viewport */
+      display: flex;
+      flex-direction: column;
+      border-radius: 12px;
+    }
+
+    .modal-header,
+    .modal-footer {
+      position: sticky;
+      /* keep them visible while body scrolls */
+      z-index: 2;
+    }
+
+    .modal-header {
+      top: 0;
+    }
+
+    .modal-footer {
+      bottom: 0;
+      background: #fff;
+      border-top: 1px solid #eee;
+    }
+
+    .modal-body {
+      overflow: auto;
+      /* inner scroll area */
+      -webkit-overflow-scrolling: touch;
+      padding: 16px 20px;
+    }
+
+    /* Lock background scroll when a modal is open */
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    /* Map height tuned for modal */
+    #eq-map {
+      height: 260px;
+    }
+
+    @media (max-width: 768px) {
+      #eq-map {
+        height: 220px;
+      }
+    }
+
+
+    @media (max-width:768px) {
+      header {
+        height: auto;
+        flex-wrap: wrap
+      }
+
+      .desktop-nav,
+      .desktop-search-container {
+        display: none
+      }
+
+      .mobile-nav-menu.active {
+        display: flex
+      }
+
+      .form-row {
+        flex-direction: column
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="mobile-header-group">
+      <button id="mobile-menu-button" class="mobile-menu-button"><i class="fas fa-bars"></i></button>
+      <div class="header-logo-text"><img src="/images/homelogo2.png" alt="AgroRent" /></div>
+    </div>
+    <nav class="desktop-nav">
+      <a href="dash.html" class="nav-link" data-key="nav_home">Home</a>
+      <a href="addequipment.html" class="nav-link" data-key="nav_add_equipment">Add Equipment</a>
+      <a href="hireoperators.html" class="nav-link" data-key="nav_hire_operator">Hire Operator</a>
+      <a href="addsolutions.html" class="nav-link" data-key="nav_knowledge_hub">Knowledge Hub</a>
+      <a href="addvideos.html" class="nav-link" data-key="nav_equipment_videos">Equipment Videos</a>
+    </nav>
+    <div class="desktop-search-container">
+      <div class="desktop-search-bar">
+        <i class="fas fa-search fa-2x"></i>
+        <input type="text" id="search-input-desktop" data-key-placeholder="search_placeholder"
+          placeholder="Search..." />
+      </div>
+      <button class="location-detector-btn"><i class="fas fa-location-arrow fa-3x"></i></button>
+    </div>
+    <div class="user-menu-dropdown-container">
+      <button id="user-menu-button" class="user-menu-button"><i class="fas fa-user-circle fa-4x"></i></button>
+      <div id="user-dropdown" class="user-dropdown hidden">
+        <div class="lang-switcher-container">
+          <div class="lang-switcher">
+            <button id="lang-en" class="active">English</button>
+            <button id="lang-kn">ಕನ್ನಡ</button>
+          </div>
+        </div>
+        <a href="account.html" class="user-dropdown-link"><span data-key="account">Account</span></a>
+        <a href="bookinghistory.html" class="user-dropdown-link"><span data-key="booking_history">Booking
+            History</span></a>
+        <a href="payment-history.html" class="user-dropdown-link"><span data-key="payment_history">Payment
+            History</span></a>
+        <button type="button" class="user-dropdown-link logout-btn" data-key="logout">Logout</button>
+      </div>
+    </div>
+    <nav id="mobile-nav" class="mobile-nav-menu">
+      <a href="dash.html" class="nav-link" data-key="nav_home">Home</a>
+      <a href="addequipment.html" class="nav-link" data-key="nav_add_equipment">Add Equipment</a>
+      <a href="hireoperators.html" class="nav-link" data-key="nav_hire_operator">Hire Operator</a>
+      <a href="addsolutions.html" class="nav-link" data-key="nav_knowledge_hub">Knowledge Hub</a>
+      <a href="addvideos.html" class="nav-link" data-key="nav_equipment_videos">Equipment Videos</a>
+      <div class="mobile-search-container"><i class="fas fa-search"></i><input type="text" id="search-input-mobile"
+          data-key-placeholder="search_placeholder" placeholder="Search..." /></div>
+      <button class="location-detector-btn"><i class="fas fa-location-arrow"></i></button>
+    </nav>
+  </header>
+
+  <main class="main-content">
+    <h2 class="section-heading" id="page-title" data-key="main_title">My Account</h2>
+
+    <!-- Profile -->
+    <section class="profile-card">
+      <div class="profile-image-container">
+        <img id="profile-avatar" src="https://placehold.co/120x120/173c1c/e8f5e9?text=U" alt="User Profile Picture" />
+      </div>
+      <div class="profile-details">
+        <h3 id="profile-name" data-key="profile_name">John Doe</h3>
+        <p><i class="fas fa-envelope"></i> <span id="profile-email" data-key="profile_email">john.doe@example.com</span>
+        </p>
+        <p><i class="fas fa-phone"></i> <span id="profile-phone" data-key="profile_phone">+91 9876543210</span></p>
+        <p><i class="fas fa-map-marker-alt"></i> <span id="profile-address" data-key="profile_address">Mandya,
+            Karnataka</span></p>
+        <p><i class="fas fa-globe"></i> <span id="profile-language" data-key="profile_language">English</span></p>
+      </div>
+      <button id="open-edit-modal" class="edit-details-btn" data-key="edit_details_btn">Edit Details</button>
+    </section>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button id="my-equipment-tab" class="tab-btn active" data-key="my_equipment_tab">My Equipment</button>
+      <button id="my-solutions-tab" class="tab-btn" data-key="my_solutions_tab">My Farm Solutions</button>
+    </div>
+
+    <div id="tab-content-container">
+      <div id="my-equipment-content" class="tab-content">
+        <div id="equipment-grid" class="card-grid"></div>
+        <div id="no-equipment-message" class="no-content-message hidden">
+          <p data-key="no_equipment">No equipment listed yet.</p>
+        </div>
+      </div>
+      <div id="my-solutions-content" class="tab-content hidden">
+        <div id="solutions-grid" class="card-grid"></div>
+        <div id="no-solutions-message" class="no-content-message hidden">
+          <p data-key="no_solutions">No solutions submitted yet.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="legal-links">
+      <p data-key="footer_text">&copy; 2024 AgroRent. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Profile Edit Modal (unchanged behavior) -->
+  <div id="edit-modal-backdrop" class="modal-backdrop hidden">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+      <div class="modal-header">
+        <h3 id="editModalTitle">Edit Profile</h3>
+        <button id="close-edit-modal" class="btn btn-secondary" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+          <img id="edit-img-preview" class="img-preview" src="https://placehold.co/140x140/173c1c/e8f5e9?text=U"
+            alt="Preview" />
+          <div class="form-group" style="margin-bottom:0">
+            <label for="edit-image">Profile Image</label>
+            <input id="edit-image" type="file" accept="image/*" />
+            <div class="help">Upload a square image for best results.</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label for="edit-fullname">Full Name</label><input id="edit-fullname" type="text"
+              placeholder="Your name" /></div>
+          <div class="form-group"><label for="edit-email">Email</label><input id="edit-email" type="email"
+              placeholder="you@example.com" /></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label for="edit-phone">Phone (used as username)</label><input id="edit-phone"
+              type="text" placeholder="+91 9xxxxxxxxx" /></div>
+          <div class="form-group"><label for="edit-language">Language</label>
+            <select id="edit-language">
+              <option value="">Select</option>
+              <option value="English">English</option>
+              <option value="Kannada">Kannada</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label for="edit-address">Address</label><textarea id="edit-address" rows="2"
+            placeholder="City, State"></textarea></div>
+        <div id="edit-error" class="help" style="color:var(--danger);display:none;"></div>
+        <div id="edit-success" class="help" style="color:green;display:none;"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="delete-image" class="btn btn-danger hidden">Remove Image</button>
+        <button id="save-edit" class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Equipment Edit Modal (MATCHES addequipment fields/UX) -->
+  <div id="eq-modal-backdrop" class="modal-backdrop hidden">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="eqModalTitle">
+      <div class="modal-header">
+        <h3 id="eqModalTitle">Edit Equipment</h3>
+        <button id="eq-close" class="btn btn-secondary" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- Name + Type -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="eq-name">Equipment Name</label>
+            <select id="eq-name">
+              <option value="" disabled>Select Equipment</option>
+              <option value="Tractor">Tractor</option>
+              <option value="Rotavator">Rotavator</option>
+              <option value="Sprayer">Sprayer</option>
+              <option value="Harvester">Harvester</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="eq-type">Equipment Type</label>
+            <select id="eq-type">
+              <option value="" disabled>Select Type</option>
+              <option value="Tilling">Tilling</option>
+              <option value="Planting">Planting</option>
+              <option value="Spraying">Spraying</option>
+              <option value="Harvesting">Harvesting</option>
+              <option value="Others">Others</option>
+            </select>
+            <div class="help">Type is for display only (not stored).</div>
+          </div>
+        </div>
+
+        <!-- Phone (+91 UI) + Price -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="eq-contact">Contact Number</label>
+            <div style="display:flex;align-items:center;">
+              <input type="text" value="+91" style="width:60px;text-align:center;margin-right:.5rem;" readonly>
+              <input type="tel" id="eq-contact" placeholder="Phone Number" maxlength="10" />
+            </div>
+            <div class="help">Enter 10 digits. We’ll send only the digits like on Add page.</div>
+          </div>
+          <div class="form-group">
+            <label for="eq-price">Price</label>
+            <div style="display:flex;align-items:center;gap:.5rem;">
+              <span>₹</span><input type="number" id="eq-price" step="0.01" min="0" placeholder="Price per day" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Description + Image -->
+        <div class="form-group">
+          <label for="eq-description">Equipment Description</label>
+          <textarea id="eq-description" rows="3"
+            placeholder="Provide a detailed description of the equipment..."></textarea>
+        </div>
+        <div class="form-row">
+          <div style="display:flex;align-items:center;gap:12px;flex:1">
+            <img id="eq-img-preview" class="img-preview" src="https://placehold.co/140x140/cccccc/333?text=No+Image"
+              alt="Preview" />
+            <div class="form-group" style="margin-bottom:0;flex:1">
+              <label for="eq-image">Upload Equipment Image</label>
+              <input id="eq-image" type="file" accept="image/*" />
+              <div class="help">Leave empty to keep current image.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Location + Map + hidden lat/lon -->
+        <div class="form-group">
+          <label for="eq-location">Location</label>
+          <input type="text" id="eq-location" placeholder="Enter your equipment location" />
+          <button type="button" id="eq-use-location" class="btn btn-primary" style="margin-top:10px;width:auto;">📍 Use
+            My Location</button>
+        </div>
+        <div id="eq-map" style="height:280px;margin-top:10px;border-radius:8px;overflow:hidden;"></div>
+        <input type="hidden" id="eq-lat" />
+        <input type="hidden" id="eq-lon" />
+
+        <div id="eq-error" class="help" style="color:var(--danger);display:none;"></div>
+        <div id="eq-success" class="help" style="color:green;display:none;"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="eq-save" class="btn btn-primary">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ---------- Config / helpers ---------- */
+    const API_BASE = "http://127.0.0.1:5000";
+    const qs = (s) => document.querySelector(s);
+
+    const translations = {
+      en: { title: 'AgroRent Account', nav_home: 'Home', nav_add_equipment: 'Add Equipment', nav_hire_operator: 'Hire Operator', nav_knowledge_hub: 'Knowledge Hub', nav_equipment_videos: 'Equipment Videos', main_title: 'My Account', profile_name: 'John Doe', profile_email: 'john.doe@example.com', profile_phone: '+91 9876543210', profile_address: 'Mandya, Karnataka', profile_language: 'English', edit_details_btn: 'Edit Details', my_equipment_tab: 'My Equipment', my_solutions_tab: 'My Farm Solutions', no_equipment: 'No equipment listed yet.', no_solutions: 'No solutions submitted yet.', logout: 'Logout', search_placeholder: 'Search...', footer_text: '© 2024 AgroRent. All rights reserved.' },
+      kn: {} // keep your Kannada map if needed
+    };
+
+    function updateContent(lang) {
+      const t = translations[lang] || translations.en;
+      document.querySelectorAll('[data-key]:not(input):not(textarea):not(select):not(option)').forEach(el => { const k = el.getAttribute('data-key'); if (t[k]) el.textContent = t[k]; });
+      document.querySelectorAll('[data-key-placeholder]').forEach(el => { const k = el.getAttribute('data-key-placeholder'); if (t[k]) el.placeholder = t[k]; });
+    }
+    function switchLanguage(lang) { updateContent(lang); }
+
+    /* ---------- Profile API ---------- */
+    async function fetchProfileFromApi() {
+      const token = localStorage.getItem('access_token'); if (!token) return null;
+      try {
+        const res = await fetch(`${API_BASE}/api/profile`, { headers: { Authorization: 'Bearer ' + token } });
+        if (!res.ok) { if (res.status === 401 || res.status === 422) { localStorage.removeItem('access_token'); localStorage.removeItem('user_role'); } return null; }
+        return await res.json();
+      } catch (e) { console.error(e); return null; }
+    }
+    function fillProfileUI(p) {
+      if (!p) return;
+      qs('#profile-name').textContent = p.full_name || ''; qs('#profile-email').textContent = p.email || '';
+      qs('#profile-phone').textContent = p.phone || p.username || ''; qs('#profile-address').textContent = p.address || '';
+      qs('#profile-language').textContent = p.language || 'English';
+      if (p.image_url) { qs('#profile-avatar').src = p.image_url.startsWith('http') ? p.image_url : (API_BASE + p.image_url); }
+      if (p.role) localStorage.setItem('user_role', p.role);
+    }
+
+    /* ---------- Equipment list ---------- */
+    let myEquipmentCache = [];
+    function createEquipmentCard(it) {
+      const img = it.image_url ? (it.image_url.startsWith('http') ? it.image_url : (API_BASE + it.image_url)) : "https://placehold.co/600x400/cccccc/333333?text=No+Image";
+      return `
+    <div class="card">
+      <img src="${img}" alt="${it.name}" style="width:100%;height:150px;object-fit:cover;border-radius:8px;">
+      <h3 class="card-title">${it.name}</h3>
+      <p class="card-meta">${it.description || ""}</p>
+      <p class="card-meta"><i class="fas fa-tag"></i> ₹${it.price}/day</p>
+      <p class="card-meta"><i class="fas fa-phone"></i> ${it.contact_number || ""}</p>
+      <p class="card-meta"><i class="fas fa-map-marker-alt"></i> ${it.location || ""}</p>
+      <div style="margin-top:10px;display:flex;gap:8px;">
+        <button onclick="editEquipment(${it.id})" style="padding:6px 12px;background:#007bff;color:#fff;border:none;border-radius:4px;cursor:pointer;">Edit</button>
+        <button onclick="deleteEquipment(${it.id})" style="padding:6px 12px;background:#dc3545;color:#fff;border:none;border-radius:4px;cursor:pointer;">Delete</button>
+      </div>
+    </div>
+  `;
+    }
+    function renderEquipmentCards(data) {
+      const grid = qs('#equipment-grid'), msg = qs('#no-equipment-message');
+      grid.innerHTML = ''; if (!Array.isArray(data) || !data.length) { grid.classList.add('hidden'); msg.classList.remove('hidden'); return; }
+      msg.classList.add('hidden'); grid.classList.remove('hidden');
+      data.forEach(it => { const d = document.createElement('div'); d.classList.add('equipment-card'); d.innerHTML = createEquipmentCard(it); grid.appendChild(d); });
+    }
+    async function fetchMyEquipment() {
+      const token = localStorage.getItem('access_token'); const role = localStorage.getItem('user_role');
+      const grid = qs('#equipment-grid'), msg = qs('#no-equipment-message');
+      if (!token) { grid.classList.add('hidden'); msg.classList.remove('hidden'); msg.querySelector('p').textContent = "Please login to see your equipment."; return; }
+      if (role !== 'owner') { grid.classList.add('hidden'); msg.classList.remove('hidden'); msg.querySelector('p').textContent = "Permission denied. This tab is only for equipment owners."; return; }
+      try {
+        const res = await fetch(`${API_BASE}/my-equipment`, { headers: { Authorization: 'Bearer ' + token } });
+        if (!res.ok) { grid.classList.add('hidden'); msg.classList.remove('hidden'); msg.querySelector('p').textContent = (await res.json()).msg || "Error fetching equipment"; return; }
+        const data = await res.json(); myEquipmentCache = Array.isArray(data) ? data : []; renderEquipmentCards(myEquipmentCache);
+      } catch (e) { console.error(e); grid.classList.add('hidden'); msg.classList.remove('hidden'); msg.querySelector('p').textContent = "Failed to load equipment."; }
+    }
+
+    /* ---------- Equipment EDIT modal (compatible with add page) ---------- */
+    let eqMap, eqMarker, eqMapInitialized = false;
+    let currentEditingEquipmentId = null;
+
+    function initEqMap(lat, lon, zoom = 13) {
+      if (eqMapInitialized) {
+        eqMap.setView([lat, lon], zoom); eqMarker.setLatLng([lat, lon]); return;
+      }
+      eqMap = L.map('eq-map').setView([lat, lon], zoom);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors' }).addTo(eqMap);
+      eqMarker = L.marker([lat, lon], { draggable: true }).addTo(eqMap);
+      eqMarker.on('dragend', () => { const ll = eqMarker.getLatLng(); setEqLatLon(ll.lat, ll.lng); reverseGeocodeToEqLocation(ll.lat, ll.lng); });
+      eqMap.on('click', (e) => { eqMarker.setLatLng(e.latlng); setEqLatLon(e.latlng.lat, e.latlng.lng); reverseGeocodeToEqLocation(e.latlng.lat, e.latlng.lng); });
+      eqMapInitialized = true;
+    }
+    function setEqLatLon(lat, lon) { qs('#eq-lat').value = lat; qs('#eq-lon').value = lon; }
+    async function reverseGeocodeToEqLocation(lat, lon) {
+      try {
+        const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`);
+        const j = await r.json(); qs('#eq-location').value = j.display_name || qs('#eq-location').value;
+      } catch (e) { console.warn('reverse geocode failed'); }
+    }
+
+    function prefillEqModal(item) {
+      // Name select: ensure value exists; add custom option if unknown
+      const nameSel = qs('#eq-name');
+      if (![...nameSel.options].some(o => o.value === item.name)) {
+        const opt = document.createElement('option'); opt.value = item.name || ''; opt.textContent = item.name || ''; nameSel.appendChild(opt);
+      }
+      nameSel.value = item.name || '';
+
+      // Type (display-only; not in DB). Try to guess from description; else blank.
+      qs('#eq-type').value = '';
+
+      // Contact number digits only (like add page)
+      const digits = (item.contact_number || '').replace(/\D/g, '');
+      qs('#eq-contact').value = digits.slice(-10); // keep last 10
+
+      qs('#eq-price').value = item.price != null ? item.price : '';
+      qs('#eq-description').value = item.description || '';
+      qs('#eq-location').value = item.location || '';
+
+      const img = item.image_url ? (item.image_url.startsWith('http') ? item.image_url : (API_BASE + item.image_url)) : "https://placehold.co/140x140/cccccc/333?text=No+Image";
+      qs('#eq-img-preview').src = img;
+
+      // Lat/Lon defaults
+      const lat = (item.latitude != null) ? item.latitude : 15.3;
+      const lon = (item.longitude != null) ? item.longitude : 74.5;
+      setEqLatLon(lat, lon);
+      setTimeout(() => initEqMap(lat, lon, item.latitude != null ? 14 : 12), 0);
+    }
+
+    function openEqModal() { qs('#eq-modal-backdrop').classList.remove('hidden'); }
+    function closeEqModal() { qs('#eq-modal-backdrop').classList.add('hidden'); qs('#eq-error').style.display = 'none'; qs('#eq-success').style.display = 'none'; qs('#eq-image').value = ''; }
+
+    function editEquipment(id) {
+      const item = myEquipmentCache.find(e => e.id === id);
+      if (!item) { alert('Equipment not found.'); return; }
+      currentEditingEquipmentId = id;
+      prefillEqModal(item);
+      openEqModal();
+    }
+
+    qs('#eq-close').addEventListener('click', closeEqModal);
+    qs('#eq-modal-backdrop').addEventListener('click', (e) => { if (e.target.id === 'eq-modal-backdrop') closeEqModal(); });
+    qs('#eq-image').addEventListener('change', () => {
+      const f = qs('#eq-image').files?.[0]; if (f) { qs('#eq-img-preview').src = URL.createObjectURL(f); }
+    });
+    qs('#eq-use-location').addEventListener('click', () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          const lat = pos.coords.latitude, lon = pos.coords.longitude;
+          setEqLatLon(lat, lon); initEqMap(lat, lon, 15); reverseGeocodeToEqLocation(lat, lon);
+        });
+      } else { alert('Geolocation not supported.'); }
+    });
+
+    qs('#eq-save').addEventListener('click', async () => {
+      const token = localStorage.getItem('access_token'); if (!token) { window.location.href = 'login.html'; return; }
+      if (!currentEditingEquipmentId) { qs('#eq-error').textContent = 'No equipment selected.'; qs('#eq-error').style.display = 'block'; return; }
+
+      // Validate similar to add page
+      const name = qs('#eq-name').value;
+      const contactDigits = qs('#eq-contact').value.trim();
+      const price = qs('#eq-price').value;
+      const desc = qs('#eq-description').value.trim();
+      const location = qs('#eq-location').value.trim();
+      const lat = qs('#eq-lat').value;
+      const lon = qs('#eq-lon').value;
+
+      if (!name) { showEqErr("Please select an equipment name."); return; }
+      if (!contactDigits) { showEqErr("Please enter a contact number."); return; }
+      if (!/^\d{10}$/.test(contactDigits)) { showEqErr("Please enter a valid 10-digit contact number."); return; }
+      if (!desc) { showEqErr("Please provide a detailed description."); return; }
+      if (price === '' || Number(price) <= 0) { showEqErr("Please enter a valid price."); return; }
+      if (!location) { showEqErr("Please enter a location."); return; }
+
+      const fd = new FormData();
+      fd.append('name', name);
+      fd.append('description', desc);
+      fd.append('price', price);
+      fd.append('contact_number', contactDigits); // send only digits (matches add page)
+      fd.append('location', location);
+      if (lat !== '') fd.append('latitude', lat);
+      if (lon !== '') fd.append('longitude', lon);
+      const imgFile = qs('#eq-image').files?.[0];
+      if (imgFile) fd.append('image', imgFile);
+
+      try {
+        const res = await fetch(`${API_BASE}/equipment/${currentEditingEquipmentId}`, {
+          method: 'PUT', headers: { Authorization: 'Bearer ' + token }, body: fd
+        });
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok) { showEqErr(body.msg || body.error || 'Failed to update equipment.'); return; }
+
+        qs('#eq-success').textContent = 'Equipment updated.'; qs('#eq-success').style.display = 'block';
+        // refresh list
+        await fetchMyEquipment();
+        setTimeout(closeEqModal, 700);
+      } catch (e) { console.error(e); showEqErr('Server error. Please try again.'); }
+    });
+    function showEqErr(msg) { const el = qs('#eq-error'); el.textContent = msg; el.style.display = 'block'; }
+
+    /* ---------- Delete equipment (unchanged) ---------- */
+    async function deleteEquipment(id) {
+      if (!confirm("Are you sure you want to delete this equipment?")) return;
+      const token = localStorage.getItem('access_token');
+      try {
+        const res = await fetch(`${API_BASE}/delete-equipment/${id}`, { method: 'DELETE', headers: { Authorization: 'Bearer ' + token } });
+        if (res.ok) { alert('Equipment deleted successfully!'); fetchMyEquipment(); }
+        else { const e = await res.json().catch(() => ({})); alert(e.error || e.msg || 'Failed to delete equipment'); }
+      } catch (e) { console.error(e); alert('Server error while deleting equipment.'); }
+    }
+
+    /* ---------- Solutions placeholder ---------- */
+    function renderSolutionCards() {
+      const grid = qs('#solutions-grid'), msg = qs('#no-solutions-message'); grid.innerHTML = '';
+      msg.classList.remove('hidden'); grid.classList.add('hidden');
+    }
+
+    /* ---------- Tabs ---------- */
+    function setupTabs() {
+      const eqTab = qs('#my-equipment-tab'), solTab = qs('#my-solutions-tab');
+      const eqContent = qs('#my-equipment-content'), solContent = qs('#my-solutions-content');
+      function show(tab) {
+        eqTab.classList.remove('active'); solTab.classList.remove('active');
+        eqContent.classList.add('hidden'); solContent.classList.add('hidden');
+        if (tab === 'equipment') { eqTab.classList.add('active'); eqContent.classList.remove('hidden'); fetchMyEquipment(); }
+        else { solTab.classList.add('active'); solContent.classList.remove('hidden'); renderSolutionCards(); }
+      }
+      eqTab.addEventListener('click', () => show('equipment'));
+      solTab.addEventListener('click', () => show('solutions'));
+      const initialRole = localStorage.getItem('user_role');
+      if (initialRole === 'owner') show('equipment'); else { eqTab.classList.add('hidden'); show('solutions'); }
+    }
+
+    /* ---------- Profile modal logic ---------- */
+    const profBackdrop = qs('#edit-modal-backdrop'), openProfBtn = qs('#open-edit-modal'), closeProfBtn = qs('#close-edit-modal');
+    const saveProfBtn = qs('#save-edit'), profImgInput = qs('#edit-image'), profImgPrev = qs('#edit-img-preview'), profErr = qs('#edit-error'), profOk = qs('#edit-success'), delImgBtn = qs('#delete-image');
+
+    function openProfileModal() { profBackdrop.classList.remove('hidden'); }
+    function closeProfileModal() { profBackdrop.classList.add('hidden'); profErr.style.display = 'none'; profOk.style.display = 'none'; }
+
+    openProfBtn.addEventListener('click', () => {
+      qs('#edit-fullname').value = qs('#profile-name').textContent || '';
+      qs('#edit-email').value = qs('#profile-email').textContent || '';
+      qs('#edit-phone').value = qs('#profile-phone').textContent || '';
+      qs('#edit-address').value = qs('#profile-address').textContent || '';
+      const lang = (qs('#profile-language').textContent || 'English'); qs('#edit-language').value = (lang === 'ಕನ್ನಡ' || lang === 'Kannada') ? 'Kannada' : 'English';
+      profImgPrev.src = qs('#profile-avatar').src || "https://placehold.co/140x140/173c1c/e8f5e9?text=U";
+      openProfileModal();
+    });
+    closeProfBtn.addEventListener('click', closeProfileModal);
+    profBackdrop.addEventListener('click', (e) => { if (e.target === profBackdrop) closeProfileModal(); });
+    profImgInput.addEventListener('change', () => { const f = profImgInput.files?.[0]; if (f) profImgPrev.src = URL.createObjectURL(f); });
+
+    saveProfBtn.addEventListener('click', async () => {
+      profErr.style.display = 'none'; profOk.style.display = 'none';
+      const token = localStorage.getItem('access_token'); if (!token) { window.location.href = 'login.html'; return; }
+      const full_name = qs('#edit-fullname').value.trim(); const email = qs('#edit-email').value.trim();
+      const phone = qs('#edit-phone').value.trim(); const address = qs('#edit-address').value.trim(); const language = qs('#edit-language').value;
+      if (email && !/^[\w.-]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) { profErr.textContent = "Please enter a valid email."; profErr.style.display = 'block'; return; }
+      const fd = new FormData(); if (full_name) fd.append('full_name', full_name); if (email) fd.append('email', email); if (phone) fd.append('phone', phone); if (address) fd.append('address', address); if (language) fd.append('language', language);
+      if (profImgInput.files?.[0]) fd.append('image', profImgInput.files[0]);
+      try {
+        const res = await fetch(`${API_BASE}/api/profile`, { method: 'PUT', headers: { Authorization: 'Bearer ' + token }, body: fd });
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok) { profErr.textContent = body.msg || "Failed to update profile."; profErr.style.display = 'block'; return; }
+        if (body.profile) {
+          const p = body.profile; qs('#profile-name').textContent = p.full_name || ''; qs('#profile-email').textContent = p.email || '';
+          qs('#profile-phone').textContent = p.phone || p.username || ''; qs('#profile-address').textContent = p.address || ''; qs('#profile-language').textContent = p.language || 'English';
+          if (p.image_url) { qs('#profile-avatar').src = p.image_url.startsWith('http') ? p.image_url : (API_BASE + p.image_url); }
+        }
+        profOk.textContent = "Profile updated successfully."; profOk.style.display = 'block'; setTimeout(closeProfileModal, 800);
+      } catch (e) { console.error(e); profErr.textContent = "Server error. Please try again."; profErr.style.display = 'block'; }
+    });
+
+    /* ---------- Header/menu/lang, initial load ---------- */
+    window.onload = async function () {
+      switchLanguage('en');
+
+      const mobileMenuButton = qs('#mobile-menu-button'), mobileNav = qs('#mobile-nav');
+      if (mobileMenuButton && mobileNav) mobileMenuButton.addEventListener('click', () => mobileNav.classList.toggle('hidden'));
+      const userMenuButton = qs('#user-menu-button'), userDropdown = qs('#user-dropdown');
+      if (userMenuButton && userDropdown) {
+        userMenuButton.addEventListener('click', (e) => { userDropdown.classList.toggle('hidden'); e.stopPropagation(); });
+        document.addEventListener('click', (ev) => { if (!userDropdown.contains(ev.target) && !userMenuButton.contains(ev.target)) userDropdown.classList.add('hidden'); });
+      }
+      qs('#lang-en')?.addEventListener('click', () => switchLanguage('en'));
+      qs('#lang-kn')?.addEventListener('click', () => switchLanguage('kn'));
+
+      const profile = await fetchProfileFromApi(); if (profile) { fillProfileUI(profile); } else { localStorage.removeItem('user_role'); }
+
+      const logoutBtn = document.querySelector('.logout-btn');
+      if (logoutBtn) logoutBtn.addEventListener('click', () => { localStorage.removeItem('access_token'); localStorage.removeItem('user_role'); window.location.href = "login.html"; });
+
+      setupTabs();
+    };
+  </script>
+</body>
+
+</html>

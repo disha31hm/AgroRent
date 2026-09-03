@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title data-key="title">AgroRent Hire Operators</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@400;700&display=swap" rel="stylesheet"/>
+    <script src="https://kit.fontawesome.com/906faa9c3f.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary-green: #173c1c;
+            --soft-earth-tone: #e8f5e9;
+            --accent-orange: #FFA500;
+            --accent-dark: #CC8400;
+            --text-dark: #173c1c;
+            --text-light: #fff;
+        }
+
+        /* Typography & General Styles */
+        body {
+            font-family: 'Poppins', 'Noto Sans Kannada', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
+            background-color: var(--soft-earth-tone);
+            line-height: 1.8;
+        }
+
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .font-kannada { font-family: 'Noto Sans Kannada', sans-serif; }
+
+        .container {
+            max-width: 2000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .hidden { display: none !important; }
+
+        /* Animations */
+        .animate-pulse-slow {
+            animation: pulse-glow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% {
+                filter: drop-shadow(0 0 1px rgba(255, 165, 0, 0.4));
+                transform: scale(1);
+            }
+            50% {
+                filter: drop-shadow(0 0 8px rgba(255, 165, 0, 0.8));
+                transform: scale(1.05);
+            }
+        }
+
+         /* Header and Navigation */
+        header {
+            background-color: white;
+            color: var(--text-dark);
+            padding: 1.5rem 20px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            height: 50px;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        .header-logo-text img{
+            width: 100%;
+            height: 70px;
+            margin-left: 40px;
+        }
+
+        /* Desktop Nav */
+        .desktop-nav {
+            display: none;
+            flex-grow: 1;
+            justify-content: center;
+            gap: 30px;
+        }
+        @media (min-width: 768px) {
+            .desktop-nav { display: flex; }
+        }
+        .desktop-nav a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.3rem;
+            position: relative;
+            transition: color 0.3s;
+            margin-right: 15px;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-green);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 4px;
+            background-color: #173c1c;
+            border-radius: 2px;
+            transition: width 0.3s ease, left 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
+        .desktop-search-container {
+            display: none;
+            width: 25%;
+            align-items: center;
+            gap: 15px;
+            margin-right: 40px;
+        }
+        @media (min-width: 768px) {
+            .desktop-search-container { display: flex; }
+        }
+
+        .desktop-search-bar {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 40px;
+            gap: 0.5rem;
+            background-color: #f3f4f6;
+            border-radius: 9999px;
+            padding: 0.5rem 1rem;
+            border: 1px solid #e5e7eb;
+        }
+
+        .desktop-search-bar input {
+            background: transparent;
+            font-size: 1.3rem;
+            border: none;
+            outline: none;
+            color: var(--text-dark);
+        }
+
+        .location-detector-btn {
+            width: 20%;
+            background: none;
+            border: none;
+            color: var(--accent-orange);
+            padding: 0.5rem;
+            margin-left: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .location-detector-btn i{
+            width: 100%;
+        }
+        .location-detector-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Mobile Nav */
+        .mobile-header-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .mobile-menu-button {
+            background: none;
+            border: none;
+            color: var(--primary-green);
+            cursor: pointer;
+        }
+        @media (min-width: 768px) {
+            .mobile-menu-button { display: none; }
+        }
+        .mobile-nav-menu {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            padding: 1rem 0;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            margin-top: 10px;
+        }
+        .mobile-nav-menu a {
+            padding: 0.5rem 1rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+        .mobile-search-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: #f3f4f6;
+            border-radius: 9999px;
+            border: 1px solid #e5e7eb;
+        }
+        .mobile-search-container input {
+            background: transparent;
+            border: none;
+            outline: none;
+            width: 100%;
+            color: var(--text-dark);
+        }
+        .mobile-search-container input::placeholder {
+            color: #6b7280;
+        }
+
+        /* User & Lang Switcher */
+        .user-menu-dropdown-container {
+            position: relative;
+            width: 5%;
+        }
+        .user-menu-button {
+            background: var(--soft-earth-tone);
+            border: none;
+            color: var(--primary-green);
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .user-menu-button:hover { background-color: rgba(23, 60, 28, 0.1); }
+        .user-dropdown {
+            position: absolute;
+            top: 112%;
+            right: 0;
+            margin-top: 10px;
+            width: 350px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+        .lang-switcher-container {
+            padding: 10px;
+            width: 50%;
+            margin: 0 auto;
+        }
+        .lang-switcher {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--text-dark);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .lang-switcher button {
+            background: none;
+            border: none;
+            color: var(--text-dark);
+            padding: 15px 18px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            font-family: 'Noto Sans Kannada', sans-serif;
+            font-size: 1.2rem;
+            flex: 1;
+        }
+        .lang-switcher button.active {
+            background-color: var(--primary-green);
+            color: var(--text-light);
+            font-weight: 700;
+        }
+        .user-dropdown-link {
+            display: block;
+            padding: 15px;
+            margin-left: 10px;
+            font-size: 1.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: background-color 0.3s;
+        }
+        .user-dropdown-link:hover { background-color: #f3f4f6; }
+
+        .logout-btn{
+            background-color: #173c1c;
+            margin: 0 auto;
+            color: white;
+            border-radius: 15px;
+            height: 50px;
+            width: 160px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .logout-btn:hover{
+            background-color: var(--soft-earth-tone);
+            color: var(--text-dark);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 2rem 1rem;
+            max-width: 2000px;
+            margin: 0 auto;
+            margin-top: 10px;
+            padding-top: 0;
+        }
+         .main-content h2{
+            text-align: center;
+            margin: 1rem auto;
+        }
+        .section-heading {
+            font-size: 2.8rem;
+            color: var(--primary-green);
+            margin: 0 auto;
+            padding: 0;
+        }
+        .sub-heading {
+            padding: 0;
+            margin-top: 0;
+            font-size: 1.5rem;
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+        }
+        .operators-section h3{
+             margin-top: 0;
+            padding-top: 0;
+            font-size: 2.8rem;
+            text-align: center;
+            margin: 1rem auto;
+        }
+
+        /* Register as Operator Form */
+        .register-form-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 1px solid var(--primary-green);
+            padding: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 5px;
+            border: 1px solid var(--text-dark);
+            background-color: #f3f4f6;
+            font-size: 1.2rem;
+            color: var(--text-dark);
+            box-sizing: border-box;
+        }
+        .form-group input::placeholder {
+            color: #6b7280;
+        }
+        .input-with-icon {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .input-with-icon input {
+            flex-grow: 1;
+        }
+
+        /* new: small inline button for location inside input row */
+        .input-with-icon .use-location-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            margin-left: 6px;
+            color: var(--accent-orange);
+            border-radius: 8px;
+        }
+        .input-with-icon .use-location-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .form-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .submit-btn {
+            background-color: var(--primary-green);
+            color: var(--text-light);
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+            width: 100%;
+        }
+        .submit-btn:hover {
+            background-color: var(--soft-earth-tone);
+            color: var(--text-dark);
+        }
+        .reset-btn {
+            background-color: #f3f4f6;
+            color: var(--text-dark);
+            border: 1px solid #e5e7eb;
+        }
+        .reset-btn:hover { background-color: #e5e7eb; }
+
+        /* Operator Search Section */
+        .operators-section {
+            margin-top: 4rem;
+        }
+        .operators-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .operators-search-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: white;
+            border-radius: 9999px;
+            padding: 0.5rem 1rem;
+            border: 1px solid #e5e7eb;
+            max-width: 500px;
+            width: 100%;
+        }
+        .operators-search-bar input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-dark);
+            width: 100%;
+        }
+        .operators-search-bar input::placeholder {
+            color: #6b7280;
+        }
+
+        .more-btn {
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            padding: 8px 14px;
+            border-radius: 9999px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        }
+        .more-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .filters-panel {
+            position: absolute;
+            right: 20px;
+            top: 140px;
+            width: 320px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            padding: 16px;
+            z-index: 1200;
+            display: none;
+            border: 1px solid #e5e7eb;
+        }
+        .filters-panel.active { display: block; }
+        .filter-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .filter-row label { min-width: 90px; font-weight: 600; color: #374151; }
+        .filters-panel .apply-btn {
+            background-color: var(--primary-green);
+            color: var(--text-light);
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            width: 100%;
+        }
+        .filters-panel .reset-btn {
+            background: transparent;
+            border: 1px solid #e5e7eb;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .operators-filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .operators-filters select {
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            border: 1px solid var(--text-dark);
+            background-color: white;
+            font-size: 1rem;
+        }
+        .operators-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .operator-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 1px solid var(--primary-green);
+            transition: transform 0.3s;
+        }
+        .operator-card:hover { transform: translateY(-5px); }
+        .operator-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .status-available { color: #2c6032; font-weight: 700; }
+        .status-unavailable { color: #d9534f; font-weight: 700; }
+        .operator-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 1rem;
+        }
+        .operator-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            font-size: 1.2rem;
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+        }
+        .operator-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .operator-meta i {
+            color: var(--primary-green);
+        }
+        .hire-btn {
+            background-color: var(--primary-green);
+            color: var(--text-light);
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+            width: 100%;
+        }
+        .hire-btn:hover {
+            background-color: var(--soft-earth-tone);
+            color: var(--text-dark);
+        }
+
+        /* Success/Error Message Modal */
+        .message-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 1001;
+            text-align: center;
+            border: 1px solid var(--primary-green);
+        }
+        .close-modal-btn {
+            background-color: var(--primary-green);
+            color: var(--text-light);
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+            margin-top: 1rem;
+        }
+        .close-modal-btn:hover { background-color: var(--accent-dark); }
+
+        /* Footer */
+        footer {
+            width: 100%;
+            background-color: var(--primary-green);
+            color: var(--text-light);
+            text-align: center;
+            padding: 20px 0 5px;
+        }
+        .legal-links p {
+            font-size: 1.3rem;
+            color: var(--text-light);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 10px;
+            margin-top: 5px;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .desktop-nav, .desktop-search-container { display: none; }
+            .mobile-header-group { flex-grow: 1; }
+            header { flex-wrap: wrap; height: auto; }
+            .user-menu-dropdown-container { order: 2; }
+            .user-dropdown { position: static; width: 100%; margin-top: 10px; }
+            .mobile-nav-menu.active { display: flex; }
+            .main-content { padding-top: 1rem; }
+            .register-form-card { padding: 1rem; }
+            .operators-search-bar { width: 100%; margin-bottom: 1rem; }
+            .operators-grid { grid-template-columns: 1fr; }
+            .filters-panel { position: fixed; left: 12px; right: 12px; top: calc(50% - 160px); width: auto; }
+        }
+    #operators-map {
+    width: 100%;
+    height: 420px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    margin-bottom: 1.5rem;
+        }
+
+    #register-map {
+        width: 100%;
+        height: 320px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+        margin-bottom: 1rem;
+    }
+
+    .leaflet-top.leaflet-left .locate-control {
+    margin-top: 70px; /* avoid overlapping header */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="mobile-header-group">
+            <button id="mobile-menu-button" class="mobile-menu-button">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="header-logo-text font-poppins"><img src="../images/homelogo2.png" alt="AgroRent"></div>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <nav class="desktop-nav">
+            <a href="dash.html" class="nav-link" data-key="nav_home">Home</a>
+            <a href="addequipment.html" class="nav-link" data-key="nav_add_equipment">Add Equipment</a>
+            <a href="hireoperators.html" class="nav-link" data-key="nav_hire_operator">Hire Operator</a>
+            <a href="addsolutions.html" class="nav-link" data-key="nav_farm_solutions">Farm Solutions</a>
+            <a href="addvideos.html" class="nav-link" data-key="nav_equipment_videos">Equipment Videos</a>
+        </nav>
+
+        <div class="desktop-search-container">
+            <div class="desktop-search-bar">
+                <i class="fas fa-search fa-2x"></i>
+                <input type="text" id="search-input-desktop" data-key-placeholder="search_placeholder" placeholder="Search for operator...">
+            </div>
+            <button class="location-detector-btn" id="desktop-gps-btn">
+                <i class="fas fa-location-arrow animate-pulse-slow fa-3x"></i>
+            </button>
+        </div>
+
+        <div class="user-menu-dropdown-container">
+            <button id="user-menu-button" class="user-menu-button">
+                <i class="fas fa-user-circle fa-4x"></i>
+            </button>
+            <div id="user-dropdown" class="user-dropdown hidden">
+                <div class="lang-switcher-container">
+                    <div class="lang-switcher">
+                        <button id="lang-en" class="active">English</button>
+                        <button id="lang-kn">ಕನ್ನಡ</button>
+                    </div>
+                </div>
+                <a href="account.html" class="user-dropdown-link"><span data-key="account">Account</span></a>
+                <a href="bookinghistory.html" class="user-dropdown-link"><span data-key="booking_history">Booking History</span></a>
+                <a href="payment-history.html" class="user-dropdown-link"><span data-key="payment_history">Payment History</span></a>
+                <button type="button" class="user-dropdown-link logout-btn" 
+                    data-key="logout"> 
+                    Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Nav -->
+        <nav id="mobile-nav" class="mobile-nav-menu">
+            <a href="dashboard.html" class="nav-link" data-key="nav_home">Home</a>
+            <a href="add-equipment.html" class="nav-link" data-key="nav_add_equipment">Add Equipment</a>
+            <a href="hireoperators.html" class="nav-link" data-key="nav_hire_operator">Hire Operator</a>
+            <a href="farm-solutions.html" class="nav-link" data-key="nav_farm_solutions">Farm Solutions</a>
+            <a href="equipment-videos.html" class="nav-link" data-key="nav_equipment_videos">Equipment Videos</a>
+            <div class="mobile-search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input-mobile" data-key-placeholder="search_placeholder" placeholder="Search for equipment...">
+            </div>
+            <button class="location-detector-btn" id="mobile-gps-btn">
+                <i class="fas fa-location-arrow animate-pulse-slow"></i>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <h2 class="section-heading font-poppins" id="page-title" data-key="main_title">
+            Hire Operators
+        </h2>
+
+
+        <!-- Section 1 - Register as an Operator (ADDED: Register map) -->
+        <section class="register-form-card">
+            <h3 class="sub-heading" data-key="register_operator_title">Register as an Operator</h3>
+            
+
+            <form id="register-operator-form">
+                <div class="form-group">
+                    <label for="operator-name" data-key="operator_name_label">Operator Name</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user fa-2x"></i>
+                        <input type="text" id="operator-name" data-key-placeholder="operator_name_placeholder" placeholder="Your Name">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="contact-number" data-key="contact_number_label">Contact Number</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-phone fa-2x"></i>
+                        <input type="tel" id="contact-number" data-key-placeholder="contact_number_placeholder" placeholder="Phone Number">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="location" data-key="your_location_label">Your Location</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-map-marker-alt fa-2x"></i>
+                        <input type="text" id="location" data-key-placeholder="your_location_placeholder" placeholder="e.g., Mandya, Karnataka">
+                        <!-- ADDED: small button inside the same input row to use GPS (places marker on register map) -->
+                        <button type="button" id="get-current-location-btn" class="use-location-btn" title="Use my current location">
+                            <i class="fas fa-location-arrow"></i>
+                        </button>
+                        
+                    </div>
+                    <small style="color:#6b7280;display:block;margin-top:6px">Click on the map above to drop a pin, or use the GPS button.</small>
+                    <!-- Register map lets operator drop a pin for their location -->
+                        <div id="register-map"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="availability" data-key="availability_label">Availability</label>
+                    <select id="availability">
+                        <option value="available" data-key="availability_available">Available</option>
+                        <option value="unavailable" data-key="availability_unavailable">Not Available</option>
+                    </select>
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" class="submit-btn" id="register-btn" data-key="register_btn">Register</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Section 2 - Map + Search for Nearby Operators -->
+        <section class="operators-section">
+            <h3 class="section-heading" data-key="find_operators_title">Find Nearby Operators</h3>
+
+            <!-- MAP: existing operators map stays here -->
+            <div id="operators-map"></div>
+
+            <!-- Controls: search + more (filters/sorting) -->
+            <div class="operators-controls container" style="position:relative;">
+                <div class="operators-search-bar" style="max-width:640px;">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="operators-search-input" placeholder="Search for operators...">
+                </div>
+                <button id="more-filters-button" class="more-btn"><i class="fas fa-sliders-h"></i> More</button>
+
+                <!-- Filters panel (hidden by default) -->
+                <div id="filters-panel" class="filters-panel" role="dialog" aria-hidden="true">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                        <strong>Filters & Sort</strong>
+                        <button id="close-filters" style="background:none;border:none;cursor:pointer;color:#6b7280;"><i class="fas fa-times"></i></button>
+                    </div>
+
+                    <div class="filter-row">
+                        <label for="filter-availability">Availability</label>
+                        <select id="filter-availability" style="flex:1;padding:8px;border-radius:6px;border:1px solid #e5e7eb;">
+                            <option value="all">All</option>
+                            <option value="available">Available</option>
+                            <option value="unavailable">Not Available</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-row">
+                        <label for="filter-sort">Sort By</label>
+                        <select id="filter-sort" style="flex:1;padding:8px;border-radius:6px;border:1px solid #e5e7eb;">
+                            <option value="distance_asc">Distance ↑</option>
+                            <option value="distance_desc">Distance ↓</option>
+                            <option value="name_asc">Name A → Z</option>
+                            <option value="name_desc">Name Z → A</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-row">
+                        <label for="filter-radius">Max (km)</label>
+                        <input id="filter-radius" type="number" step="0.1" min="0" placeholder="e.g., 10" style="flex:1;padding:8px;border-radius:6px;border:1px solid #e5e7eb;">
+                    </div>
+
+                    <button id="apply-filters" class="apply-btn">Apply</button>
+                    <button id="reset-filters" class="reset-btn">Reset Filters</button>
+                </div>
+            </div>
+
+            <div id="operators-grid" class="operators-grid">
+                <!-- Operator cards will be dynamically inserted here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Success Message Modal -->
+    <div id="success-modal" class="message-modal hidden">
+        <h3 class="font-poppins" data-key="success_title">Success!</h3>
+        <p data-key="success_text">Your registration has been submitted successfully!</p>
+        <button id="close-modal-btn" class="close-modal-btn" data-key="close_button">Close</button>
+    </div>
+
+    <!-- No Operators Message -->
+    <div id="no-operators-message" class="message-modal hidden">
+        <h3 class="font-poppins" data-key="no_operators_title">Oops!</h3>
+        <p class="" data-key="no_operators_text">No operators found nearby.</p>
+        <button id="close-no-operators-btn" class="close-modal-btn" data-key="close_button">Close</button>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="legal-links">
+            <p data-key="footer_text">&copy; 2024 AgroRent. All rights reserved.</p>
+        </div>
+    </footer>
+<script>
+/*
+Additive changes summary (implemented inline):
+ - Sort operators by ascending distance when capturedLatitude/capturedLongitude available (default sort).
+ - "More" button opens a small filters/sorting panel to set availability, sort order, and max radius (km).
+ - Filters apply client-side (and send availability to backend when possible).
+ - Search box wired to filter results.
+ - Minimal UX: panel toggles, apply/reset behavior, mobile friendly placement.
+*/
+
+/* ---------- Config & globals ---------- */
+const API_BASE = "http://127.0.0.1:5000";
+const NOMINATIM_BASE = "https://nominatim.openstreetmap.org";
+
+const translations = {
+    en: {
+        title: 'AgroRent Hire Operators',
+        nav_home: 'Home',
+        nav_add_equipment: 'Add Equipment',
+        nav_hire_operator: 'Hire Operator',
+        nav_knowledge_hub: 'Knowledge Hub',
+        nav_farm_solutions: 'Farm Solutions',
+        nav_equipment_videos: 'Equipment Videos',
+        main_title: 'Hire Operators',
+        main_title_kn: 'ಆಪರೇಟರ್ ನೇಮಿಸಿ',
+        register_operator_title: 'Register as an Operator',
+        operator_name_label: 'Operator Name',
+        operator_name_placeholder: 'Your Name',
+        contact_number_label: 'Contact Number',
+        contact_number_placeholder: 'Phone Number',
+        your_location_label: 'Your Location',
+        your_location_placeholder: 'e.g., Mandya, Karnataka',
+        availability_label: 'Availability',
+        availability_available: 'Available',
+        availability_unavailable: 'Not Available',
+        register_btn: 'Register',
+        find_operators_title: 'Find Nearby Operators',
+        search_placeholder: 'Search for operators...',
+        filter_all: 'All',
+        filter_available: 'Available',
+        filter_any: 'Any distance',
+        status_available: 'Available',
+        status_unavailable: 'Not Available',
+        hire_now_btn: 'Hire Now',
+        no_operators_title: 'Oops!',
+        no_operators_text: 'No operators found nearby.',
+        success_title: 'Success!',
+        success_text: 'Your registration has been submitted successfully!',
+        close_button: 'Close',
+        account: 'Account',
+        booking_history: 'Booking History',
+        payment_history: 'Payment History',
+        logout: 'Logout',
+        footer_text: '&copy; 2024 AgroRent. All rights reserved.'
+    },
+    kn: {
+        title: 'ಮಾರ್ಫ್ ಆಪರೇಟರ್ ನೇಮಿಸಿ',
+        nav_home: 'ಹೋಮ್',
+        nav_add_equipment: 'ಸಲಕರಣೆ ಸೇರಿಸಿ',
+        nav_hire_operator: 'ಆಪರೇಟರ್ ನೇಮಿಸಿ',
+        nav_knowledge_hub: 'ಜ್ಞಾನ ಕೇಂದ್ರ',
+        nav_farm_solutions: 'ಕೃಷಿ ಪರಿಹಾರಗಳು',
+        nav_equipment_videos: 'ಉಪಕರಣ ವಿಡಿಯೋಗಳು',
+        main_title: 'ಆಪರೇಟರ್ ನೇಮಿಸಿ',
+        main_title_kn: 'ಆಪರೇಟರ್ ನೇಮಿಸಿ',
+        register_operator_title: 'ಆಪರೇಟರ್ ಆಗಿ ನೋಂದಾಯಿಸಿ',
+        operator_name_label: 'ಆಪರೇಟರ್ ಹೆಸರು',
+        operator_name_placeholder: 'ನಿಮ್ಮ ಹೆಸರು',
+        contact_number_label: 'ಸಂಪರ್ಕ ಸಂಖ್ಯೆ',
+        contact_number_placeholder: 'ದೂರವಾಣಿ ಸಂಖ್ಯೆ',
+        your_location_label: 'ನಿಮ್ಮ ಸ್ಥಳ',
+        your_location_placeholder: 'ಉದಾ: ಮಂಡ್ಯ, ಕರ್ನಾಟಕ',
+        availability_label: 'ಲಭ್ಯತಾ',
+        availability_available: 'ಲಭ್ಯವಿದೆ',
+        availability_unavailable: 'ಲಭ್ಯವಿಲ್ಲ',
+        register_btn: 'ನೋಂದಾಯಿಸಿ',
+        find_operators_title: 'ಸಮೀಪದ ಆಪರೇಟರ್‌ಗಳನ್ನು ಹುಡುಕಿ',
+        search_placeholder: 'ಆಪರೇಟರ್‌ಗಳನ್ನು ಹುಡುಕಿ...',
+        filter_all: 'ಎಲ್ಲವೂ',
+        filter_available: 'ಲಭ್ಯವಿದೆ',
+        filter_any: 'ಯಾವುದೇ ದೂರ',
+        status_available: 'ಲಭ್ಯವಿದೆ',
+        status_unavailable: 'ಲಭ್ಯವಿಲ್ಲ',
+        hire_now_btn: 'ಈಗ ನೇಮಿಸಿ',
+        no_operators_title: 'ಕ್ಷಮಿಸಿ!',
+        no_operators_text: 'ಸಮೀಪದಲ್ಲಿ ಯಾವುದೇ ಆಪರೇಟರ್‌ಗಳು ಕಂಡುಬಂದಿಲ್ಲ.',
+        success_title: 'ಯಶಸ್ಸು!',
+        success_text: 'ನಿಮ್ಮ ನೋಂದಣಿ ಯಶಸ್ವಿಯಾಗಿ ಸಲ್ಲಿಸಲಾಗಿದೆ!',
+        close_button: 'ಮುಚ್ಚಿ',
+        account: 'ಖಾತೆ',
+        booking_history: 'ಬುಕಿಂಗ್ ಇತಿಹಾಸ',
+        payment_history: 'ಪಾವತಿ ಇತಿಹಾಸ',
+        logout: 'ಲಾಗ್ ಔಟ್',
+        footer_text: '&copy; 2024 ಮಾರ್ಫ್. ಎಲ್ಲಾ ಹಕ್ಕುಗಳನ್ನು ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ.'
+    }
+};
+
+let currentLang = 'en';
+
+/* Global user location (used for distance calculations when searching operators) */
+let capturedLatitude = null;
+let capturedLongitude = null;
+
+/* Register (operator) pin coordinates (picked on the register map) */
+let registerLatitude = null;
+let registerLongitude = null;
+let registerMap = null;
+let registerMarker = null;
+
+/* Map variables for operators map */
+let operatorsMap = null;
+let operatorsLayerGroup = null;
+
+/* Current UI filters & sort state (used across calls) */
+const currentFilters = {
+    search: "",
+    availability: "all",     // 'all' | 'available' | 'unavailable'
+    maxDistanceKm: null,     // number or null
+    sortBy: "distance_asc"   // distance_asc | distance_desc | name_asc | name_desc
+};
+
+/* ---------- language & DOM helpers ---------- */
+function updateContent(lang) {
+    const langData = translations[lang] || translations.en;
+    const titleElement = document.querySelector('title');
+    if (titleElement) {
+        const key = titleElement.getAttribute('data-key');
+        if (key && langData[key]) titleElement.textContent = langData[key];
+    }
+    document.querySelectorAll('[data-key]:not(input):not(textarea):not(select):not(option)').forEach(el => {
+        const key = el.getAttribute('data-key');
+        if (key && langData[key]) el.textContent = langData[key];
+    });
+    document.querySelectorAll('[data-key-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-key-placeholder');
+        if (key && langData[key]) el.placeholder = langData[key];
+    });
+    const registerBtn = document.getElementById('register-btn');
+    if (registerBtn && langData.register_btn) registerBtn.textContent = langData.register_btn;
+}
+function switchLanguage(lang) { currentLang = lang; updateContent(lang); const en = document.getElementById('lang-en'); const kn = document.getElementById('lang-kn'); if (en) en.classList.remove('active'); if (kn) kn.classList.remove('active'); if (lang==='en' && en) en.classList.add('active'); if (lang==='kn' && kn) kn.classList.add('active'); document.documentElement.lang = lang; }
+function showMessageModal(id){ const m = document.getElementById(id); if (m) m.classList.remove('hidden'); }
+function hideMessageModal(id){ const m = document.getElementById(id); if (m) m.classList.add('hidden'); }
+
+/* ---------- Nominatim helpers (geocode / reverse) ---------- */
+async function geocodeAddress(address) {
+    if (!address || !address.trim()) return null;
+    const q = encodeURIComponent(address.trim());
+    const url = `${NOMINATIM_BASE}/search?format=jsonv2&q=${q}&limit=1`;
+    try {
+        const res = await fetch(url, { headers: { 'Accept': 'application/json' }});
+        if (!res.ok) { console.warn('Nominatim geocode status', res.status); return null; }
+        const arr = await res.json();
+        if (!Array.isArray(arr) || arr.length === 0) return null;
+        return { latitude: parseFloat(arr[0].lat), longitude: parseFloat(arr[0].lon), display_name: arr[0].display_name };
+    } catch (err) {
+        console.error('Geocode error', err);
+        return null;
+    }
+}
+
+async function reverseGeocode(lat, lon) {
+    if (lat == null || lon == null) return null;
+    const url = `${NOMINATIM_BASE}/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`;
+    try {
+        const res = await fetch(url, { headers: { 'Accept': 'application/json' }});
+        if (!res.ok) { console.warn('Nominatim reverse status', res.status); return null; }
+        const obj = await res.json();
+        return { display_name: obj && obj.display_name ? obj.display_name : null };
+    } catch (err) {
+        console.error('Reverse geocode error', err);
+        return null;
+    }
+}
+
+/* ---------- Haversine distance helper ---------- */
+function haversineDistanceKM(lat1, lon1, lat2, lon2) {
+    // returns distance in kilometers between two coords
+    const toRad = (v) => v * Math.PI / 180;
+    const R = 6371; // earth radius km
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+              Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+}
+
+/* ---------- Backend API helpers (UNCHANGED endpoints) ---------- */
+async function fetchOperators({ search = "", availability = "all" } = {}) {
+    const params = new URLSearchParams();
+    if (search) params.append("search", search);
+    if (availability) params.append("availability", availability);
+    const url = `${API_BASE}/api/operators` + (params.toString() ? `?${params.toString()}` : "");
+    try {
+        const res = await fetch(url, { method: "GET", headers: { "Accept": "application/json" } });
+        if (!res.ok) { console.error("fetchOperators failed", res.status); return []; }
+        return await res.json();
+    } catch (err) {
+        console.error("fetchOperators error", err);
+        return [];
+    }
+}
+
+async function postOperator(payload) {
+    const url = `${API_BASE}/api/operators`;
+    try {
+        const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        const json = await res.json().catch(()=>null);
+        return { ok: res.ok, status: res.status, body: json };
+    } catch (err) {
+        console.error("postOperator error", err);
+        return { ok: false, status: 0, body: null };
+    }
+}
+
+async function hireOperatorApi(id) {
+    const url = `${API_BASE}/api/operators/${id}/hire`;
+    return fetch(url, { method: "POST", headers: { "Content-Type": "application/json" } });
+}
+
+/* ---------- UI rendering helpers (distance added) ---------- */
+function createOperatorCard(op) {
+    const card = document.createElement("div");
+    card.className = "operator-card";
+
+    const statusDiv = document.createElement("div");
+    statusDiv.className = "operator-status";
+
+    const nameH4 = document.createElement("h4");
+    nameH4.className = "operator-name";
+    nameH4.textContent = op.name || "";
+
+    const statusSpan = document.createElement("span");
+    statusSpan.className = (op.availability === "available") ? "status-available" : "status-unavailable";
+    statusSpan.textContent = (op.availability === "available") ? translations[currentLang].status_available || "Available" : translations[currentLang].status_unavailable || "Not Available";
+
+    statusDiv.appendChild(nameH4);
+    statusDiv.appendChild(statusSpan);
+
+    const metaDiv = document.createElement("div");
+    metaDiv.className = "operator-meta";
+
+    const phoneSpan = document.createElement("span");
+    const phoneIcon = document.createElement("i");
+    phoneIcon.className = "fas fa-phone";
+    const phoneAnchor = document.createElement("a");
+    phoneAnchor.href = `tel:${op.contact_number || ""}`;
+    phoneAnchor.textContent = op.contact_number || "";
+    phoneSpan.appendChild(phoneIcon);
+    phoneSpan.appendChild(document.createTextNode(" "));
+    phoneSpan.appendChild(phoneAnchor);
+
+    const locSpan = document.createElement("span");
+    const locIcon = document.createElement("i");
+    locIcon.className = "fas fa-map-marker-alt";
+    const locText = document.createElement("span");
+    if (op.location && op.location.trim()) {
+        locText.textContent = op.location;
+    } else if (op.latitude != null && op.longitude != null) {
+        const mapA = document.createElement("a");
+        mapA.href = `https://www.google.com/maps?q=${op.latitude},${op.longitude}`;
+        mapA.target = "_blank";
+        mapA.rel = "noopener noreferrer";
+        mapA.textContent = `${op.latitude.toFixed(6)}, ${op.longitude.toFixed(6)}`;
+        locText.appendChild(mapA);
+    } else {
+        locText.textContent = "";
+    }
+    locSpan.appendChild(locIcon);
+    locSpan.appendChild(document.createTextNode(" "));
+    locSpan.appendChild(locText);
+
+    metaDiv.appendChild(phoneSpan);
+    metaDiv.appendChild(locSpan);
+
+    // Price display
+    const priceSpan = document.createElement("span");
+    priceSpan.style.fontWeight = "700";
+    priceSpan.style.color = "#173c1c";
+    priceSpan.style.marginTop = "8px";
+    priceSpan.style.display = "block";
+    priceSpan.style.fontSize = "1.1em";
+    const priceIcon = document.createElement("i");
+    priceIcon.className = "fas fa-rupee-sign";
+    priceSpan.appendChild(priceIcon);
+    priceSpan.appendChild(document.createTextNode(` ₹${op.price_per_day || 800}/day`));
+    metaDiv.appendChild(priceSpan);
+
+    // Experience display
+    const expSpan = document.createElement("span");
+    expSpan.style.color = "#666";
+    expSpan.style.marginTop = "4px";
+    expSpan.style.display = "block";
+    const expIcon = document.createElement("i");
+    expIcon.className = "fas fa-award";
+    expSpan.appendChild(expIcon);
+    expSpan.appendChild(document.createTextNode(` ${op.experience || '5 Years'} Experience`));
+    metaDiv.appendChild(expSpan);
+
+    // Distance display
+    const distanceSpan = document.createElement("span");
+    distanceSpan.style.fontWeight = "600";
+    distanceSpan.style.marginTop = "6px";
+    distanceSpan.style.display = "block";
+
+    if (typeof op._distanceKm === "number" && !isNaN(op._distanceKm)) {
+        const dkm = op._distanceKm;
+        distanceSpan.textContent = `Distance: ${dkm < 1 ? `${(dkm*1000).toFixed(0)} m` : `${dkm.toFixed(2)} km`}`;
+    } else if (op.latitude == null || op.longitude == null) {
+        distanceSpan.textContent = "Distance: N/A";
+    } else {
+        distanceSpan.textContent = "Distance: —";
+    }
+    metaDiv.appendChild(distanceSpan);
+
+    const hireBtn = document.createElement("button");
+    hireBtn.className = "hire-btn";
+    hireBtn.textContent = translations[currentLang].hire_now_btn || "Hire Now";
+    if (op.availability !== "available") {
+        hireBtn.disabled = true;
+        hireBtn.style.opacity = "0.6";
+        hireBtn.style.cursor = "not-allowed";
+    }
+    hireBtn.addEventListener("click", async () => {
+        // Redirect to operator booking page instead of direct hire
+        const operatorData = {
+            id: op.id,
+            name: op.name || 'Operator',
+            experience: op.experience || '5 Years',
+            specialization: op.specialization || 'Tractor Operations',
+            location: op.location || 'Mandya, Karnataka',
+            contact_number: op.contact_number || '+91 9876543210',
+            availability: op.availability || 'available',
+            description: op.description || 'Experienced operator with expertise in farming operations.',
+            price_per_day: op.price_per_day || 800.0
+        };
+        
+        // Store operator data in sessionStorage for the booking page
+        sessionStorage.setItem('selectedOperator', JSON.stringify(operatorData));
+        
+        // Redirect to operator booking page
+        window.location.href = 'operatorsbooking.html';
+    });
+
+    card.appendChild(statusDiv);
+    card.appendChild(metaDiv);
+    card.appendChild(hireBtn);
+
+    return card;
+}
+
+/* ---------- LEAFLET MAP + MARKERS for operators (existing) ---------- */
+function makeCircleIcon(color = '#2c6032') {
+    return L.divIcon({
+        html: `<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">\n                <circle cx="12" cy="12" r="10" fill="${color}" stroke="#ffffff" stroke-width="2"/>\n               </svg>`,
+        className: "",
+        iconSize: [24,24],
+        iconAnchor: [12,12],
+        popupAnchor: [0,-12]
+    });
+}
+
+function initOperatorsMap() {
+    if (operatorsMap) return;
+
+    operatorsMap = L.map('operators-map', { zoomControl: true });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(operatorsMap);
+
+    operatorsLayerGroup = L.layerGroup().addTo(operatorsMap);
+
+    const locateControl = L.control({ position: 'topleft' });
+    locateControl.onAdd = function () {
+        const div = L.DomUtil.create('div', 'leaflet-bar locate-control');
+        div.style.background = "#fff";
+        div.style.padding = "4px";
+        div.style.cursor = "pointer";
+        div.title = "Center map on my location";
+        div.innerHTML = '<i class="fas fa-location-arrow" style="padding:6px 8px; color:#173c1c;"></i>';
+        div.onclick = async () => {
+            if (capturedLatitude != null && capturedLongitude != null) {
+                operatorsMap.setView([capturedLatitude, capturedLongitude], 13);
+            } else {
+                try {
+                    const pos = await getCurrentPositionPromise({ timeout: 10000 });
+                    capturedLatitude = pos.coords.latitude;
+                    capturedLongitude = pos.coords.longitude;
+                    operatorsMap.setView([capturedLatitude, capturedLongitude], 13);
+                    await loadAndRenderOperators();
+                } catch (err) {
+                    alert("Unable to get your location. Please allow location access or click the GPS button in the form.");
+                }
+            }
+        };
+        return div;
+    };
+    locateControl.addTo(operatorsMap);
+}
+
+function escapeHtml(unsafe) {
+    if (!unsafe && unsafe !== 0) return '';
+    return String(unsafe)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+}
+
+function renderOperatorsMap(operatorsArray) {
+    if (!operatorsMap) initOperatorsMap();
+    if (!operatorsLayerGroup) operatorsLayerGroup = L.layerGroup().addTo(operatorsMap);
+
+    operatorsLayerGroup.clearLayers();
+
+    const markers = [];
+    operatorsArray.forEach(op => {
+        const lat = (op.latitude != null) ? parseFloat(op.latitude) : null;
+        const lon = (op.longitude != null) ? parseFloat(op.longitude) : null;
+        if (lat == null || lon == null) return;
+        const color = (op.availability === "available") ? "#2c6032" : "#d9534f";
+        const marker = L.marker([lat, lon], { icon: makeCircleIcon(color) });
+
+        const hireBtn = (op.availability === "available")
+            ? `<button onclick="hireOperatorFromPopup(${op.id})" style="background:#173c1c;color:#fff;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;font-weight:700;">Hire</button>`
+            : `<button disabled style="opacity:0.6;padding:6px 10px;border-radius:6px;">Unavailable</button>`;
+
+        const popupHtml = `
+            <div style="min-width:180px">
+                <div style="font-weight:700;margin-bottom:6px">${escapeHtml(op.name || "Operator")}</div>
+                <div style="font-size:0.95rem;color:#555;margin-bottom:6px">${escapeHtml(op.location || `${lat.toFixed(5)}, ${lon.toFixed(5)}`)}</div>
+                <div style="margin-bottom:8px"><a href="tel:${escapeHtml(op.contact_number || '')}" style="text-decoration:none;color:#173c1c;">📞 ${escapeHtml(op.contact_number || '—')}</a></div>
+                <div>${hireBtn}</div>
+            </div>
+        `;
+        marker.bindPopup(popupHtml, { minWidth: 180 });
+        marker.addTo(operatorsLayerGroup);
+        markers.push(marker);
+    });
+
+    if (markers.length === 0) {
+        operatorsMap.setView([12.9716, 77.5946], 7);
+    } else {
+        const group = L.featureGroup(markers);
+        if (capturedLatitude != null && capturedLongitude != null) {
+            const userMarker = L.circleMarker([capturedLatitude, capturedLongitude], { radius: 1, opacity: 0 });
+            group.addLayer(userMarker);
+        }
+        operatorsMap.fitBounds(group.getBounds().pad(0.15));
+    }
+}
+
+window.hireOperatorFromPopup = async function(operatorId) {
+    // Find the operator data
+    const operator = operators.find(op => op.id === operatorId);
+    if (!operator) {
+        alert("Operator not found!");
+        return;
+    }
+    
+    const operatorData = {
+        id: operator.id,
+        name: operator.name || 'Operator',
+        experience: operator.experience || '5 Years',
+        specialization: operator.specialization || 'Tractor Operations',
+        location: operator.location || 'Mandya, Karnataka',
+        contact_number: operator.contact_number || '+91 9876543210',
+        availability: operator.availability || 'available',
+        description: operator.description || 'Experienced operator with expertise in farming operations.',
+        price_per_day: operator.price_per_day || 800.0
+    };
+    
+    // Store operator data in sessionStorage for the booking page
+    sessionStorage.setItem('selectedOperator', JSON.stringify(operatorData));
+    
+    // Close popup and redirect to booking page
+    if (operatorsMap) operatorsMap.closePopup();
+    window.location.href = 'operatorsbooking.html';
+};
+
+/* ---------- REGISTER MAP (new) ---------- */
+function initRegisterMap() {
+    if (registerMap) return;
+    registerMap = L.map('register-map', { zoomControl: true });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(registerMap);
+
+    // default view (India)
+    registerMap.setView([13.0827, 80.2707], 6);
+
+    // click-to-place marker
+    registerMap.on('click', async function(e) {
+        const { lat, lng } = e.latlng;
+        placeRegisterMarker(lat, lng);
+        try {
+            const rev = await reverseGeocode(lat, lng);
+            const locInput = document.getElementById('location');
+            if (locInput) {
+                locInput.value = rev && rev.display_name ? rev.display_name : `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                locInput.dataset.fromMap = "true";
+            }
+        } catch (err) {
+            console.warn('reverse geocode failed', err);
+        }
+    });
+}
+
+function placeRegisterMarker(lat, lng) {
+    registerLatitude = lat;
+    registerLongitude = lng;
+    if (!registerMap) initRegisterMap();
+    if (registerMarker) registerMap.removeLayer(registerMarker);
+    registerMarker = L.marker([lat, lng], { draggable: true }).addTo(registerMap);
+
+    // when dragging finishes, update coords and reverse geocode
+    registerMarker.on('dragend', async function(e) {
+        const p = e.target.getLatLng();
+        registerLatitude = p.lat;
+        registerLongitude = p.lng;
+        try {
+            const rev = await reverseGeocode(registerLatitude, registerLongitude);
+            const locInput = document.getElementById('location');
+            if (locInput) {
+                locInput.value = rev && rev.display_name ? rev.display_name : `${registerLatitude.toFixed(6)}, ${registerLongitude.toFixed(6)}`;
+                locInput.dataset.fromMap = "true";
+            }
+        } catch (err) { console.warn('reverse geocode failed', err); }
+    });
+
+    registerMap.setView([lat, lng], 13);
+}
+
+/* ---------- load operators and show distances + sorting ---------- */
+async function loadAndRenderOperators() {
+    const grid = document.getElementById("operators-grid");
+    if (!grid) return;
+    grid.innerHTML = "";
+
+    try {
+        // We'll send availability to backend to reduce payload (server supports it), but final filtering & sorting happens client-side.
+        const availabilityForApi = currentFilters.availability || "all";
+        const opsRaw = await fetchOperators({ search: currentFilters.search || "", availability: availabilityForApi });
+        const ops = Array.isArray(opsRaw) ? opsRaw : (opsRaw.operators || opsRaw || []);
+        if (!Array.isArray(ops) || ops.length === 0) {
+            showMessageModal("no-operators-message");
+            renderOperatorsMap([]);
+            return;
+        }
+
+        // compute distances (if coords present and user location known)
+        ops.forEach(op => {
+            if (capturedLatitude != null && capturedLongitude != null && op.latitude != null && op.longitude != null) {
+                try {
+                    op._distanceKm = haversineDistanceKM(capturedLatitude, capturedLongitude, parseFloat(op.latitude), parseFloat(op.longitude));
+                } catch (err) {
+                    op._distanceKm = NaN;
+                }
+            } else {
+                op._distanceKm = NaN;
+            }
+        });
+
+        // client-side filtering by maxDistanceKm if requested
+        let filtered = ops.slice();
+        if (currentFilters.maxDistanceKm != null && currentFilters.maxDistanceKm !== "" && !isNaN(Number(currentFilters.maxDistanceKm))) {
+            const maxKm = Number(currentFilters.maxDistanceKm);
+            if (capturedLatitude == null || capturedLongitude == null) {
+                // can't filter by distance if user's location not known - politely inform user once
+                alert("To filter by distance, please allow location access (click the GPS button).");
+            } else {
+                filtered = filtered.filter(op => {
+                    if (typeof op._distanceKm === "number" && !isNaN(op._distanceKm)) {
+                        return op._distanceKm <= maxKm;
+                    }
+                    return false;
+                });
+            }
+        }
+
+        // Sorting
+        const sortBy = currentFilters.sortBy || "distance_asc";
+        if (sortBy === "distance_asc") {
+            filtered.sort((a,b) => {
+                const da = (typeof a._distanceKm === "number" && !isNaN(a._distanceKm)) ? a._distanceKm : Infinity;
+                const db = (typeof b._distanceKm === "number" && !isNaN(b._distanceKm)) ? b._distanceKm : Infinity;
+                return da - db;
+            });
+        } else if (sortBy === "distance_desc") {
+            filtered.sort((a,b) => {
+                const da = (typeof a._distanceKm === "number" && !isNaN(a._distanceKm)) ? a._distanceKm : -Infinity;
+                const db = (typeof b._distanceKm === "number" && !isNaN(b._distanceKm)) ? b._distanceKm : -Infinity;
+                return db - da;
+            });
+        } else if (sortBy === "name_asc") {
+            filtered.sort((a,b) => String(a.name || "").localeCompare(String(b.name || "")));
+        } else if (sortBy === "name_desc") {
+            filtered.sort((a,b) => String(b.name || "").localeCompare(String(a.name || "")));
+        }
+
+        if (filtered.length === 0) {
+            showMessageModal("no-operators-message");
+            renderOperatorsMap([]);
+            return;
+        }
+
+        // render cards & map
+        filtered.forEach(op => grid.appendChild(createOperatorCard(op)));
+        renderOperatorsMap(filtered);
+    } catch (err) {
+        console.error("Error loading operators:", err);
+        showMessageModal("no-operators-message");
+    }
+}
+
+/* ---------- Geolocation wiring (capture user location and refresh distances) ---------- */
+function getCurrentPositionPromise(options = {}) {
+    return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) return reject(new Error("Geolocation not supported"));
+        navigator.geolocation.getCurrentPosition(resolve, reject, options);
+    });
+}
+
+function wireLocationButton() {
+    const btn = document.getElementById('get-current-location-btn');
+    if (!btn) return;
+    btn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+        const isSecure = location.protocol === 'https:' || isLocalhost;
+        if (!isSecure) {
+            alert('Geolocation requires HTTPS or running on localhost. Please enter location manually or serve the page from localhost/https.');
+            return;
+        }
+
+        btn.disabled = true;
+        const original = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+        try {
+            const pos = await getCurrentPositionPromise({ enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+
+            // set register marker to the device location (for operator registration)
+            placeRegisterMarker(lat, lon);
+
+            try {
+                const rev = await reverseGeocode(lat, lon);
+                const locInput = document.getElementById('location');
+                if (locInput) {
+                    locInput.value = rev && rev.display_name ? rev.display_name : `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+                    locInput.dataset.fromMap = "true";
+                }
+            } catch (err) {
+                console.warn("reverse geocode failed", err);
+            }
+
+        } catch (err) {
+            console.error("Geolocation error", err);
+            if (err && err.code === 1) alert("Permission denied for location. Please allow location access or enter address manually.");
+            else if (err && err.code === 2) alert("Position unavailable. Enter location manually or try again.");
+            else if (err && err.code === 3) alert("Location request timed out. Try again or enter address manually.");
+            else alert("Unable to get current location. Enter address manually.");
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = original;
+        }
+    });
+}
+
+/* Hook desktop/mobile GPS buttons to attempt to capture user location for distances */
+async function wireHeaderGpsButtons() {
+    const desktopBtn = document.getElementById('desktop-gps-btn');
+    const mobileBtn = document.getElementById('mobile-gps-btn');
+
+    async function tryCaptureLocation(button) {
+        const isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+        const isSecure = location.protocol === 'https:' || isLocalhost;
+        if (!isSecure) {
+            alert('Geolocation requires HTTPS or running on localhost. Please allow location access or run locally.');
+            return;
+        }
+        if (!navigator.geolocation) {
+            alert('Geolocation is not supported in this browser.');
+            return;
+        }
+        if (button) { button.disabled = true; const prev = button.innerHTML; button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; }
+        try {
+            const pos = await getCurrentPositionPromise({ enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
+            capturedLatitude = pos.coords.latitude;
+            capturedLongitude = pos.coords.longitude;
+            await loadAndRenderOperators();
+        } catch (err) {
+            console.error("Header GPS error", err);
+            alert("Unable to get your location. Please allow location access.");
+        } finally {
+            if (button) { button.disabled = false; button.innerHTML = '<i class="fas fa-location-arrow animate-pulse-slow fa-3x"></i>'; }
+        }
+    }
+
+    if (desktopBtn) desktopBtn.addEventListener('click', () => tryCaptureLocation(desktopBtn));
+    if (mobileBtn) mobileBtn.addEventListener('click', () => tryCaptureLocation(mobileBtn));
+}
+
+/* ---------- form submission (preserve previous behavior) ---------- */
+async function handleFormSubmit(e) {
+    e.preventDefault();
+    const name = (document.getElementById('operator-name') || {}).value || "";
+    const contact = (document.getElementById('contact-number') || {}).value || "";
+    const locationText = (document.getElementById('location') || {}).value || "";
+    const availabilityEl = document.getElementById('availability');
+    const availability = availabilityEl ? availabilityEl.value : "available";
+
+    if (!name.trim() || !contact.trim()) { alert("Please enter name and contact number."); return; }
+
+    const submitBtn = document.getElementById('register-btn');
+    submitBtn.disabled = true;
+    const prevText = submitBtn.textContent;
+    submitBtn.textContent = "Submitting...";
+
+    let payload = { name: name.trim(), contact_number: contact.trim(), availability };
+
+    try {
+        const locEl = document.getElementById('location');
+        const locFromMap = locEl && locEl.dataset && locEl.dataset.fromMap === "true";
+
+        if (locFromMap && registerLatitude != null && registerLongitude != null) {
+            // If user placed a pin on the register map, prefer those coords
+            let display = null;
+            try {
+                const rev = await reverseGeocode(registerLatitude, registerLongitude);
+                display = rev && rev.display_name ? rev.display_name : null;
+            } catch (err) { console.warn("reverse geocode failed", err); }
+            payload.latitude = registerLatitude;
+            payload.longitude = registerLongitude;
+            payload.location = display || (locationText.trim() || null);
+        } else if (locationText && locationText.trim()) {
+            // fallback: geocode the text the operator entered
+            const geocoded = await geocodeAddress(locationText.trim());
+            if (geocoded) {
+                payload.latitude = geocoded.latitude;
+                payload.longitude = geocoded.longitude;
+                payload.location = geocoded.display_name || locationText.trim();
+            } else {
+                payload.latitude = null;
+                payload.longitude = null;
+                payload.location = locationText.trim();
+            }
+        } else {
+            payload.latitude = null;
+            payload.longitude = null;
+            payload.location = null;
+        }
+
+        const res = await postOperator(payload);
+        if (res.ok && res.body && res.body.operator) {
+            showMessageModal('success-modal');
+            document.getElementById('register-operator-form').reset();
+            if (document.getElementById('location')) delete document.getElementById('location').dataset.fromMap;
+            // remove register marker after successful registration
+            if (registerMarker) { registerMap.removeLayer(registerMarker); registerMarker = null; registerLatitude = null; registerLongitude = null; }
+            await loadAndRenderOperators();
+        } else {
+            const msg = (res.body && res.body.msg) ? res.body.msg : `Failed to register (status ${res.status}).`;
+            alert(msg);
+        }
+    } catch (err) {
+        console.error("Submit error", err);
+        alert("Network or geocoding error while registering operator.");
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = prevText;
+    }
+}
+
+/* ---------- Filters UI wiring ---------- */
+function wireFiltersUI() {
+    const moreBtn = document.getElementById('more-filters-button');
+    const panel = document.getElementById('filters-panel');
+    const closeBtn = document.getElementById('close-filters');
+    const applyBtn = document.getElementById('apply-filters');
+    const resetBtn = document.getElementById('reset-filters');
+
+    moreBtn && moreBtn.addEventListener('click', (e) => {
+        panel.classList.toggle('active');
+        panel.setAttribute('aria-hidden', panel.classList.contains('active') ? 'false' : 'true');
+    });
+    closeBtn && closeBtn.addEventListener('click', () => { panel.classList.remove('active'); panel.setAttribute('aria-hidden','true'); });
+
+    applyBtn && applyBtn.addEventListener('click', () => {
+        const avail = document.getElementById('filter-availability').value;
+        const sortBy = document.getElementById('filter-sort').value;
+        const radius = document.getElementById('filter-radius').value;
+
+        currentFilters.availability = avail || "all";
+        currentFilters.sortBy = sortBy || "distance_asc";
+        currentFilters.maxDistanceKm = (radius !== "" && !isNaN(Number(radius))) ? Number(radius) : null;
+
+        panel.classList.remove('active');
+        panel.setAttribute('aria-hidden','true');
+        loadAndRenderOperators();
+    });
+
+    resetBtn && resetBtn.addEventListener('click', () => {
+        document.getElementById('filter-availability').value = "all";
+        document.getElementById('filter-sort').value = "distance_asc";
+        document.getElementById('filter-radius').value = "";
+        currentFilters.availability = "all";
+        currentFilters.sortBy = "distance_asc";
+        currentFilters.maxDistanceKm = null;
+        panel.classList.remove('active');
+        panel.setAttribute('aria-hidden','true');
+        loadAndRenderOperators();
+    });
+
+    // close panel when clicking outside
+    document.addEventListener('click', function(evt){
+        if (!panel.contains(evt.target) && !moreBtn.contains(evt.target)) {
+            panel.classList.remove('active');
+            panel.setAttribute('aria-hidden','true');
+        }
+    });
+}
+
+/* ---------- Search wiring (debounced) ---------- */
+function debounce(fn, wait) {
+    let t;
+    return function(...args) {
+        clearTimeout(t);
+        t = setTimeout(() => fn.apply(this, args), wait);
+    };
+}
+function wireSearchInputs() {
+    const searchDesktop = document.getElementById('operators-search-input');
+    const searchMobile = document.getElementById('search-input-mobile');
+    const desktopHeaderSearch = document.getElementById('search-input-desktop');
+
+    const applySearch = debounce((val) => {
+        currentFilters.search = (val || "").trim();
+        loadAndRenderOperators();
+    }, 450);
+
+    if (searchDesktop) searchDesktop.addEventListener('input', (e) => applySearch(e.target.value));
+    if (searchMobile) searchMobile.addEventListener('input', (e) => applySearch(e.target.value));
+    if (desktopHeaderSearch) desktopHeaderSearch.addEventListener('input', (e) => applySearch(e.target.value));
+}
+
+/* ---------- initial wiring on load ---------- */
+window.onload = async function() {
+    // language
+    switchLanguage('en');
+
+    // header/menu wiring (preserve original)
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileNav = document.getElementById('mobile-nav');
+    if (mobileMenuButton && mobileNav) mobileMenuButton.addEventListener('click', () => mobileNav.classList.toggle('hidden'));
+
+    const userMenuButton = document.getElementById('user-menu-button');
+    const userDropdown = document.getElementById('user-dropdown');
+    if (userMenuButton && userDropdown) {
+        userMenuButton.addEventListener('click', (ev) => { userDropdown.classList.toggle('hidden'); ev.stopPropagation(); });
+    }
+    document.addEventListener('click', (ev) => {
+        if (userDropdown && userMenuButton && !userDropdown.contains(ev.target) && !userMenuButton.contains(ev.target)) {
+            userDropdown.classList.add('hidden');
+        }
+    });
+
+    const langEnBtn = document.getElementById('lang-en');
+    if (langEnBtn) langEnBtn.addEventListener('click', () => switchLanguage('en'));
+    const langKnBtn = document.getElementById('lang-kn');
+    if (langKnBtn) langKnBtn.addEventListener('click', () => switchLanguage('kn'));
+
+    // init register map and wire location button that exists in the form
+    initRegisterMap();
+    wireLocationButton();
+
+    // wire header gps buttons for capturing user location for distances
+    wireHeaderGpsButtons();
+
+    // wire filters UI
+    wireFiltersUI();
+
+    // wire search inputs
+    wireSearchInputs();
+
+    // wire location input changes — if user edits manually after map fill, clear map flag & coords
+    const locInput = document.getElementById('location');
+    if (locInput) {
+        locInput.addEventListener('input', () => {
+            if (locInput.dataset && locInput.dataset.fromMap === "true") {
+                delete locInput.dataset.fromMap;
+                // note: keep registerLatitude/Longitude as-is until they explicitly change map
+            }
+        });
+    }
+
+    // form submit
+    const form = document.getElementById('register-operator-form');
+    if (form) form.addEventListener('submit', handleFormSubmit);
+
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    if (closeModalBtn) closeModalBtn.addEventListener('click', () => hideMessageModal('success-modal'));
+    const closeNoOperatorsBtn = document.getElementById('close-no-operators-btn');
+    if (closeNoOperatorsBtn) closeNoOperatorsBtn.addEventListener('click', () => hideMessageModal('no-operators-message'));
+
+    // Try to get user location once (best-effort) to populate capturedLatitude/capturedLongitude for distance display.
+    try {
+        const isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+        const isSecure = location.protocol === 'https:' || isLocalhost;
+        if (isSecure && navigator.geolocation) {
+            const pos = await new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, () => resolve(null), { maximumAge: 60000, timeout: 5000 });
+            });
+            if (pos && pos.coords) {
+                capturedLatitude = pos.coords.latitude;
+                capturedLongitude = pos.coords.longitude;
+            }
+        }
+    } catch (err) {
+        console.warn("Initial auto geolocation failed or not permitted", err);
+    }
+
+    // initial load of operators (will show distances if capturedLatitude/capturedLongitude available)
+    await loadAndRenderOperators();
+};
+</script>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+</body>
+</html>

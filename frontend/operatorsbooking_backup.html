@@ -1,0 +1,1747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-key="title">AgroRent Operator Booking</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/906faa9c3f.js" crossorigin="anonymous"></script>
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary-green: #173c1c;
+            --soft-earth-tone: #e8f5e9;
+            --accent-orange: #FFA500;
+            --accent-dark: #CC8400;
+            --text-dark: #173c1c;
+            --text-light: #fff;
+        }
+
+        /* Typography & General Styles */
+        body {
+            font-family: 'Poppins', 'Noto Sans Kannada', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
+            background-color: var(--soft-earth-tone);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .font-kannada { font-family: 'Noto Sans Kannada', sans-serif; }
+        
+        .container {
+            max-width: 2000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .hidden { display: none !important; }
+
+        /* Animations */
+        .animate-pulse-slow {
+            animation: pulse-glow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% {
+                filter: drop-shadow(0 0 1px rgba(255, 165, 0, 0.4));
+                transform: scale(1);
+            }
+            50% {
+                filter: drop-shadow(0 0 8px rgba(255, 165, 0, 0.8));
+                transform: scale(1.05);
+            }
+        }
+        
+        /* Header and Navigation */
+        header {
+            background-color: white;
+            color: var(--text-dark);
+            padding: 1.5rem 20px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            height: 50px;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        .header-logo-text img{
+            width: 100%;
+            height: 70px;
+            margin-left: 40px;
+        }
+
+        /* Desktop Nav */
+        .desktop-nav {
+            display: none;
+            flex-grow: 1;
+            justify-content: center;
+            gap: 30px;
+        }
+        @media (min-width: 768px) {
+            .desktop-nav { display: flex; }
+        }
+        .desktop-nav a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.3rem;
+            position: relative;
+            transition: color 0.3s;
+            margin-right: 15px;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-green);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 4px;
+            background-color: #173c1c;
+            border-radius: 2px;
+            transition: width 0.3s ease, left 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
+        .desktop-search-container {
+            display: none;
+            width: 25%;
+            align-items: center;
+            gap: 15px;
+            margin-right: 40px;
+        }
+        @media (min-width: 768px) {
+            .desktop-search-container { display: flex; }
+        }
+        
+        .desktop-search-bar {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 40px;
+            gap: 0.5rem;
+            background-color: #f3f4f6;
+            border-radius: 9999px;
+            padding: 0.5rem 1rem;
+            border: 1px solid #e5e7eb;
+        }
+
+        .desktop-search-bar input {
+            background: transparent;
+            font-size: 1.3rem;
+            border: none;
+            outline: none;
+            color: var(--text-dark);
+        }
+
+        .location-detector-btn {
+            width: 20%;
+            background: none;
+            border: none;
+            color: var(--accent-orange);
+            padding: 0.5rem;
+            margin-left: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .location-detector-btn i{
+            width: 100%;
+        }
+        .location-detector-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Mobile Nav */
+        .mobile-header-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .mobile-menu-button {
+            background: none;
+            border: none;
+            color: var(--primary-green);
+            cursor: pointer;
+        }
+        @media (min-width: 768px) {
+            .mobile-menu-button { display: none; }
+        }
+        .mobile-nav-menu {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            padding: 1rem 0;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            margin-top: 10px;
+        }
+        .mobile-nav-menu a {
+            padding: 0.5rem 1rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+        .mobile-search-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: #f3f4f6;
+            border-radius: 9999px;
+            border: 1px solid #e5e7eb;
+        }
+        .mobile-search-container input {
+            background: transparent;
+            border: none;
+            outline: none;
+            width: 100%;
+            color: var(--text-dark);
+        }
+        .mobile-search-container input::placeholder {
+            color: #6b7280;
+        }
+
+        /* User & Lang Switcher */
+        .user-menu-dropdown-container {
+            position: relative;
+            width: 5%;
+        }
+        .user-menu-button {
+            background: var(--soft-earth-tone);
+            border: none;
+            color: var(--primary-green);
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .user-menu-button:hover { background-color: rgba(23, 60, 28, 0.1); }
+        .user-dropdown {
+            position: absolute;
+            top: 112%;
+            right: 0;
+            margin-top: 10px;
+            width: 350px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+        .lang-switcher-container { 
+            padding: 10px;
+            width: 50%;
+            margin: 0 auto;            
+        }
+        .lang-switcher {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--text-dark);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .lang-switcher button {
+            background: none;
+            border: none;
+            color: var(--text-dark);
+            padding: 15px 18px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            font-family: 'Noto Sans Kannada', sans-serif;
+            font-size: 1.2rem;
+            flex: 1;
+        }
+        .lang-switcher button.active {
+            background-color: var(--primary-green);
+            color: var(--text-light);
+            font-weight: 700;
+        }
+        .user-dropdown-link {
+            display: block;
+            padding: 15px;
+            margin-left: 10px;
+            font-size: 1.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: background-color 0.3s;
+        }
+        .user-dropdown-link:hover { background-color: #f3f4f6; }
+
+        .logout-btn{
+            background-color: #173c1c;
+            margin: 0 auto;
+            color: white;
+            border-radius: 15px;
+            height: 50px;
+            width: 160px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .logout-btn:hover{
+            background-color: var(--soft-earth-tone);
+            color: var(--text-dark);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 0rem 1rem 1rem;
+            max-width: 1500px;
+            margin: 0 auto;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        .main-content h2{
+            text-align: center;
+            margin: 1rem auto;
+        }
+        .section-heading {
+            font-size: 2.8rem;
+            color: var(--primary-green);
+            margin-bottom: 2rem;
+        }
+        
+        /* Booking Page Layout */
+        .booking-page-container {
+            display: flex;
+            flex-direction: row;
+            gap: 2rem;
+        }
+        .operator-details-section {
+            flex: 2;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 1px solid var(--primary-green);
+            padding: 2rem;
+        }
+        .operator-details-section h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 1rem 0 0.5rem;
+        }
+        .operator-details-section .operator-photo {
+            width: 200px;
+            height: 200px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 2px solid var(--primary-green);
+            margin-bottom: 1rem;
+        }
+        .operator-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .operator-info-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .operator-info-item label {
+            font-weight: 600;
+            color: var(--primary-green);
+            margin-bottom: 0.25rem;
+        }
+        .operator-info-item span {
+            font-size: 1.1rem;
+            padding: 0.5rem;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #e5e7eb;
+        }
+
+        /* Booking Form Section */
+        .booking-form-section {
+            flex: 1;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 1px solid var(--primary-green);
+            padding: 2rem;
+            height: fit-content;
+        }
+        .booking-form-section h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0 0 1.5rem;
+            color: var(--primary-green);
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 5px;
+            font-size: 1rem;
+            background-color: white;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(23, 60, 28, 0.1);
+        }
+
+        /* Booking Summary */
+        .booking-summary {
+            background-color: #f9f9f9;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .booking-summary h4 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 0 0 1rem;
+            color: var(--primary-green);
+        }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+        .summary-item:last-child {
+            margin-bottom: 0;
+            padding-top: 0.75rem;
+            border-top: 2px solid var(--primary-green);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        /* Payment Options */
+        .payment-options {
+            margin-bottom: 2rem;
+        }
+        .payment-options h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary-green);
+        }
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+        .payment-method:hover {
+            border-color: var(--primary-green);
+            background-color: #f9f9f9;
+        }
+        .payment-method input[type="radio"] {
+            width: 20px;
+            height: 20px;
+        }
+        .payment-method span {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        .payment-method i {
+            font-size: 1.3rem;
+            color: var(--primary-green);
+        }
+        .payment-sub-options {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        /* Confirm Button */
+        .confirm-booking-btn {
+            width: 100%;
+            background-color: var(--primary-green);
+            color: var(--text-light);
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .confirm-booking-btn:hover { 
+            background-color: #2d5a35;
+            transform: translateY(-2px);
+        }
+        .confirm-booking-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Footer */
+        footer {
+            width: 100%;
+            background-color: var(--primary-green);
+            color: var(--text-light);
+            text-align: center;
+            padding: 20px 0 5px;
+        }
+        .legal-links p {
+            font-size: 1.3rem;
+            color: var(--text-light);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 10px;
+            margin-top: 5px;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .booking-page-container {
+                flex-direction: column;
+            }
+            .operator-info-grid {
+                grid-template-columns: 1fr;
+            }
+            .desktop-nav, .desktop-search-container { display: none; }
+            .mobile-header-group { flex-grow: 1; }
+            header { flex-wrap: wrap; height: auto; }
+            .user-menu-dropdown-container { order: 2; }
+            .user-dropdown { position: static; width: 100%; margin-top: 10px; }
+            .mobile-nav-menu.active { display: flex; }
+            .main-content { padding-top: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="mobile-header-group">
+            <button id="mobile-menu-button" class="mobile-menu-button">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="header-logo-text font-poppins"><img src="../images/homelogo2.png" alt="AgroRent"></div>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <nav class="desktop-nav">
+            <a href="dash.html" class="nav-link" data-key="nav_home">Home</a>
+            <a href="addequipment.html" class="nav-link" data-key="nav_add_equipment">Add Equipment</a>
+            <a href="hireoperators.html" class="nav-link" data-key="nav_hire_operator">Hire Operator</a>
+            <a href="addsolutions.html" class="nav-link" data-key="nav_knowledge_hub">Knowledge Hub</a>
+            <a href="addvideos.html" class="nav-link" data-key="nav_equipment_videos">Equipment Videos</a>
+        </nav>
+
+        <div class="desktop-search-container">
+            <div class="desktop-search-bar">
+                <i class="fas fa-search fa-2x"></i>
+                <input type="text" id="search-input-desktop" data-key-placeholder="search_placeholder" placeholder="Search for operators...">
+            </div>
+            <button class="location-detector-btn">
+                <i class="fas fa-location-arrow animate-pulse-slow fa-3x"></i>
+            </button>
+        </div>
+
+        <div class="user-menu-dropdown-container">
+            <button id="user-menu-button" class="user-menu-button">
+                <i class="fas fa-user-circle fa-4x"></i>
+            </button>
+            <div id="user-dropdown" class="user-dropdown hidden">
+                <div class="lang-switcher-container">
+                    <div class="lang-switcher">
+                        <button id="lang-en" class="active">EN</button>
+                        <button id="lang-kn">ಕನ್ನಡ</button>
+                    </div>
+                </div>
+                <a href="account.html" class="user-dropdown-link"><span data-key="account">Account</span></a>
+                <a href="operatorsbookinghistory.html" class="user-dropdown-link"><span data-key="booking_history">Booking History</span></a>
+                <a href="payment-history.html" class="user-dropdown-link"><span data-key="payment_history">Payment History</span></a>
+                <button type="button" class="user-dropdown-link logout-btn" data-key="logout">Logout</button>
+            </div>
+        </div>
+
+        <!-- Mobile Nav -->
+        <nav id="mobile-nav" class="mobile-nav-menu">
+            <a href="dash.html" class="nav-link" data-key="nav_home">Home</a>
+            <a href="addequipment.html" class="nav-link" data-key="nav_add_equipment">Add Equipment</a>
+            <a href="hireoperators.html" class="nav-link" data-key="nav_hire_operator">Hire Operator</a>
+            <a href="addsolutions.html" class="nav-link" data-key="nav_knowledge_hub">Knowledge Hub</a>
+            <a href="addvideos.html" class="nav-link" data-key="nav_equipment_videos">Equipment Videos</a>
+            <div class="mobile-search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input-mobile" data-key-placeholder="search_placeholder" placeholder="Search for operators...">
+            </div>
+            <button class="location-detector-btn">
+                <i class="fas fa-location-arrow animate-pulse-slow"></i>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <h2 class="section-heading font-poppins" id="page-title" data-key="main_title">
+            Operator Booking
+            <span class="font-kannada" style="display: block; font-size: 1.5rem; font-weight: normal; margin-top: 0.5rem;" data-key="main_title_kn">ಆಪರೇಟರ್ ಬುಕಿಂಗ್</span>
+        </h2>
+        
+        <div class="booking-page-container">
+            <!-- Operator Details Section -->
+            <section class="operator-details-section">
+                <h3 data-key="operator_details_title">Operator Details</h3>
+                
+                <img src="../images/homelogo2.png" alt="Operator Photo" class="operator-photo" id="operator-photo">
+                
+                <div class="operator-info-grid">
+                    <div class="operator-info-item">
+                        <label data-key="operator_name_label">Name:</label>
+                        <span id="operator-name" data-key="operator_name">Rajesh Kumar</span>
+                    </div>
+                    
+                    <div class="operator-info-item">
+                        <label data-key="operator_experience_label">Experience:</label>
+                        <span id="operator-experience" data-key="operator_experience_value">5 Years</span>
+                    </div>
+                    
+                    <div class="operator-info-item">
+                        <label data-key="operator_specialization_label">Specialization:</label>
+                        <span id="operator-specialization" data-key="operator_specialization_value">Tractor Operations</span>
+                    </div>
+                    
+                    <div class="operator-info-item">
+                        <label data-key="operator_location_label">Location:</label>
+                        <span id="operator-location" data-key="operator_location_value">Mandya, Karnataka</span>
+                    </div>
+                    
+                    <div class="operator-info-item">
+                        <label data-key="operator_contact_label">Contact:</label>
+                        <span id="operator-contact" data-key="operator_contact_value">+91 9876543210</span>
+                    </div>
+                    
+                    <div class="operator-info-item">
+                        <label data-key="operator_availability_label">Availability:</label>
+                        <span id="operator-availability" data-key="operator_availability_value" style="color: green; font-weight: 600;">Available</span>
+                    </div>
+                    
+                    <div class="operator-info-item">
+                        <label data-key="operator_rate_label">Rate:</label>
+                        <span id="operator-rate" data-key="operator_rate_value" style="color: #173c1c; font-weight: 600;">₹800/day</span>
+                    </div>
+                </div>
+                
+                <div class="operator-info-item">
+                    <label data-key="operator_description_label">Description:</label>
+                    <span id="operator-description" data-key="operator_description_value">Experienced tractor operator with expertise in plowing, tilling, and harvesting. Knowledgeable about modern farming techniques and equipment maintenance.</span>
+                </div>
+            </section>
+
+            <!-- Booking Form Section -->
+            <section class="booking-form-section">
+                <h3 data-key="booking_form_title">Booking Details</h3>
+                
+                <form id="operator-booking-form">
+                    <div class="form-group">
+                        <label for="start-date" data-key="start_date_label">Start Date:</label>
+                        <input type="date" id="start-date" name="start-date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="working-days" data-key="working_days_label">Working Days:</label>
+                        <input type="number" id="working-days" name="working-days" min="1" max="30" value="1" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="work-type" data-key="work_type_label">Type of Work:</label>
+                        <select id="work-type" name="work-type" required>
+                            <option value="" data-key="select_work_type">Select work type...</option>
+                            <option value="plowing" data-key="work_plowing">Plowing</option>
+                            <option value="tilling" data-key="work_tilling">Tilling</option>
+                            <option value="harvesting" data-key="work_harvesting">Harvesting</option>
+                            <option value="spraying" data-key="work_spraying">Spraying</option>
+                            <option value="other" data-key="work_other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="field-size" data-key="field_size_label">Field Size (Acres):</label>
+                        <input type="number" id="field-size" name="field-size" min="0.1" step="0.1" placeholder="e.g., 2.5" required>
+                    </div>
+                </form>
+
+                <!-- Booking Summary -->
+                <div class="booking-summary" id="booking-summary">
+                    <h4 data-key="booking_summary_title">Booking Summary</h4>
+                    <div class="summary-item">
+                        <span data-key="summary_working_days_label">Working Days:</span>
+                        <span id="summary-days">1 <span data-key="day_suffix">Day(s)</span></span>
+                    </div>
+                    <div class="summary-item">
+                        <span data-key="summary_rate_per_day_label">Rate per Day:</span>
+                        <span id="summary-rate-per-day" data-key="summary_rate_per_day_value">₹800</span>
+                    </div>
+                    <div class="summary-item">
+                        <span data-key="summary_total_cost_label">Total Cost:</span>
+                        <span id="summary-final-total">₹800</span>
+                    </div>
+                </div>
+
+                <!-- Payment Options -->
+                <div class="payment-options">
+                    <h4 data-key="payment_method_title">Payment Method</h4>
+                    
+                    <div class="payment-method">
+                        <input type="radio" name="payment-method" value="razorpay" id="razorpay-option" checked>
+                        <label for="razorpay-option">
+                            <span><i class="fas fa-credit-card"></i> <span data-key="razorpay_label">Razorpay</span></span>
+                        </label>
+                    </div>
+                    
+                    <div id="razorpay-options" class="payment-sub-options">
+                        <p style="color: #666; font-size: 0.9rem; margin: 0;" data-key="razorpay_info">
+                            Click "Pay Now" to proceed to Razorpay payment gateway with multiple payment options including UPI, Credit/Debit Cards, and more.
+                        </p>
+                    </div>
+                    
+                    <div class="payment-method">
+                        <input type="radio" name="payment-method" value="pod" id="pod-option">
+                        <label for="pod-option">
+                            <span><i class="fas fa-hand-holding-usd"></i> <span data-key="pod_label">Payment on Delivery</span></span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" id="confirm-booking-btn" class="confirm-booking-btn" data-key="pay_now">Pay Now</button>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="legal-links">
+            <p data-key="footer_text">&copy; 2024 AgroRent. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        // Check if Razorpay script loaded successfully
+        window.addEventListener('load', function() {
+            if (typeof window.Razorpay === 'undefined') {
+                console.warn("Razorpay script did not load properly");
+            } else {
+                console.log("Razorpay script loaded successfully");
+            }
+        });
+    </script>
+    <script>
+        // Razorpay integration script for operator booking
+        function openRazorpay(finalTotal) {
+            console.log("=== OPERATOR RAZORPAY DEBUG START ===");
+            console.log("openRazorpay called with amount:", finalTotal);
+            console.log("window.Razorpay available:", typeof window.Razorpay);
+            
+            // Always use simulation for reliable testing
+            console.log("Using payment simulation for reliable testing");
+            simulateRazorpayPayment(finalTotal);
+            return;
+        }
+        
+        // Payment simulation for operator booking
+        function simulateRazorpayPayment(finalTotal) {
+            console.log("Simulating Razorpay payment for operator booking");
+            
+            const operatorName = document.getElementById('operator-name').textContent || 'Operator';
+            const workingDaysInput = document.getElementById('working-days');
+            const days = parseInt(workingDaysInput.value) || 1;
+            const workType = document.getElementById('work-type').value || 'general work';
+            
+            // Show a styled confirmation
+            const proceed = confirm(
+                `🚜 AgroRent Operator Booking Payment (Testing Mode)\n\n` +
+                `📋 Booking Details:\n` +
+                `Operator: ${operatorName}\n` +
+                `Duration: ${days} day(s)\n` +
+                `Work Type: ${workType}\n` +
+                `Total Amount: ₹${finalTotal}\n\n` +
+                `💳 This is a payment simulation for testing.\n` +
+                `Click OK to proceed with test payment, Cancel to abort.`
+            );
+            
+            if (proceed) {
+                // Show processing message
+                const processingMsg = document.createElement('div');
+                processingMsg.innerHTML = `
+                    <div style="
+                        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                        background: rgba(0,0,0,0.8); z-index: 9999;
+                        display: flex; align-items: center; justify-content: center;
+                        color: white; font-family: Arial, sans-serif;
+                    ">
+                        <div style="
+                            background: white; padding: 30px; border-radius: 10px;
+                            text-align: center; color: #333; max-width: 400px;
+                        ">
+                            <div style="font-size: 50px; margin-bottom: 15px;">👨‍🌾</div>
+                            <h3 style="color: #173c1c; margin: 0 0 10px 0;">Processing Operator Payment...</h3>
+                            <p style="margin: 0; color: #666;">Amount: ₹${finalTotal}</p>
+                            <div style="
+                                width: 100%; height: 4px; background: #f0f0f0;
+                                border-radius: 2px; margin: 20px 0; overflow: hidden;
+                            ">
+                                <div style="
+                                    width: 0%; height: 100%; background: #173c1c;
+                                    animation: loading 2s ease-in-out forwards;
+                                "></div>
+                            </div>
+                        </div>
+                    </div>
+                    <style>
+                        @keyframes loading {
+                            0% { width: 0%; }
+                            100% { width: 100%; }
+                        }
+                    </style>
+                `;
+                document.body.appendChild(processingMsg);
+                
+                // Generate a realistic payment ID
+                const fakePaymentId = 'pay_OPR' + Date.now() + Math.random().toString(36).substr(2, 5);
+                
+                setTimeout(() => {
+                    document.body.removeChild(processingMsg);
+                    handleSuccessfulPayment(fakePaymentId, finalTotal);
+                }, 2500);
+            }
+        }
+        
+        // Handle successful payment
+        function handleSuccessfulPayment(paymentId, finalTotal) {
+            // Call backend API to create booking
+            createOperatorBooking(paymentId, finalTotal, 'razorpay');
+        }
+        
+        // Create operator booking via API
+        async function createOperatorBooking(paymentId, finalTotal, paymentMethod) {
+            const operatorData = sessionStorage.getItem('selectedOperator');
+            if (!operatorData) {
+                alert('Operator data not found. Please try again.');
+                return;
+            }
+            
+            const operator = JSON.parse(operatorData);
+            const workingDaysInput = document.getElementById('working-days');
+            const startDateInput = document.getElementById('start-date');
+            const workType = document.getElementById('work-type').value || 'general work';
+            const fieldSize = document.getElementById('field-size').value || 'small';
+            
+            const bookingData = {
+                working_days: parseInt(workingDaysInput.value) || 1,
+                work_type: workType,
+                field_size: fieldSize,
+                start_date: startDateInput.value || new Date().toISOString(),
+                payment_method: paymentMethod,
+                payment_id: paymentId,
+                user_id: 1  // Default user for testing
+            };
+            
+            try {
+                const response = await fetch(`http://127.0.0.1:5000/api/operators/${operator.id}/hire`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(bookingData)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(`Operator Booking Successful! Booking ID: ${result.booking_id}`);
+                    
+                    // Clear session storage
+                    sessionStorage.removeItem('selectedOperator');
+                    
+                    // Redirect to success page
+                    const params = new URLSearchParams({
+                        type: 'operator',
+                        amount: finalTotal,
+                        operator: operator.name,
+                        days: bookingData.working_days,
+                        work_type: workType,
+                        field_size: fieldSize,
+                        location: operator.location,
+                        payment_id: paymentId,
+                        payment_method: paymentMethod,
+                        status: 'confirmed',
+                        booking_id: result.booking_id
+                    });
+                    
+                    window.location.href = `pod-success.html?${params.toString()}`;
+                } else {
+                    const error = await response.json();
+                    alert(`Booking failed: ${error.msg || 'Unknown error'}`);
+                }
+            } catch (error) {
+                console.error('Booking error:', error);
+                alert('Booking failed. Please try again.');
+            }
+        }
+        
+        // Additional payment button translations
+        const paymentTranslations = {
+            en: {
+                pay_now: 'Pay Now',
+                confirm_booking_btn: 'Confirm Booking'
+            },
+            kn: {
+                pay_now: 'ಈಗ ಪಾವತಿಸಿ',
+                confirm_booking_btn: 'ಬುಕಿಂಗ್ ದೃಢೀಕರಿಸಿ'
+            }
+        };
+
+        // Function to update summary
+        const updateSummary = () => {
+            const workingDaysInput = document.getElementById('working-days');
+            const days = parseInt(workingDaysInput.value) || 1;
+            
+            // Get operator price from loaded data
+            const operatorData = sessionStorage.getItem('selectedOperator');
+            let ratePerDay = 800; // Default rate
+            
+            if (operatorData) {
+                const operator = JSON.parse(operatorData);
+                ratePerDay = operator.price_per_day || 800;
+            }
+            
+            const finalTotal = days * ratePerDay;
+
+            // Update summary display
+            document.getElementById('summary-days').textContent = `${days} Day(s)`;
+            document.getElementById('summary-rate-per-day').textContent = `₹${ratePerDay}`;
+            document.getElementById('summary-final-total').textContent = `₹${finalTotal}`;
+        };
+
+        // Load operator data from sessionStorage
+        const loadOperatorData = () => {
+            const operatorData = sessionStorage.getItem('selectedOperator');
+            if (operatorData) {
+                const operator = JSON.parse(operatorData);
+                
+                // Update operator details
+                document.getElementById('operator-name').textContent = operator.name || 'Operator Name';
+                document.getElementById('operator-experience').textContent = operator.experience || '5 Years';
+                document.getElementById('operator-specialization').textContent = operator.specialization || 'Tractor Operations';
+                document.getElementById('operator-location').textContent = operator.location || 'Location';
+                document.getElementById('operator-contact').textContent = operator.contact_number || '+91 9876543210';
+                document.getElementById('operator-availability').textContent = operator.availability || 'Available';
+                document.getElementById('operator-description').textContent = operator.description || 'Experienced operator';
+                
+                // Update rate display
+                const ratePerDay = operator.price_per_day || 800;
+                document.getElementById('operator-rate').textContent = `₹${ratePerDay}/day`;
+                
+                // Update availability color
+                const availabilitySpan = document.getElementById('operator-availability');
+                if (operator.availability === 'available') {
+                    availabilitySpan.style.color = 'green';
+                } else {
+                    availabilitySpan.style.color = 'red';
+                }
+            }
+        };
+
+        // Onload function
+        window.onload = function() {
+            // Load operator data first
+            loadOperatorData();
+
+            // Booking logic
+            const confirmBtn = document.getElementById('confirm-booking-btn');
+            const workingDaysInput = document.getElementById('working-days');
+            const startDateInput = document.getElementById('start-date');
+
+            if (confirmBtn) {
+                confirmBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const selectedMethod = document.querySelector('input[name="payment-method"]:checked');
+                    if (!selectedMethod) {
+                        alert('Please select a payment method');
+                        return;
+                    }
+
+                    const selectedMethodValue = selectedMethod.value;
+                    const finalTotal = parseFloat(document.getElementById('summary-final-total').textContent.replace(/[^0-9.]/g, ""));
+                    
+                    // Basic validation
+                    if (!startDateInput.value || !workingDaysInput.value || parseInt(workingDaysInput.value) < 1) {
+                        alert('Please select a valid start date and number of working days.');
+                        return;
+                    }
+
+                    const workType = document.getElementById('work-type').value;
+                    const fieldSize = document.getElementById('field-size').value;
+                    
+                    if (!workType || !fieldSize) {
+                        alert('Please fill in all required fields.');
+                        return;
+                    }
+
+                    if (selectedMethodValue === "razorpay") {
+                        openRazorpay(finalTotal);
+                    } else if (selectedMethodValue === "pod") {
+                        // For POD, call the booking API directly
+                        createOperatorBooking("POD_" + Date.now(), finalTotal, 'pod');
+                    }
+                });
+            }
+            
+            // Re-attaching event listeners for dynamic updates
+            if (workingDaysInput) {
+                workingDaysInput.addEventListener('input', updateSummary);
+            }
+
+            // Payment method change listener
+            const paymentMethods = document.querySelectorAll('input[name="payment-method"]');
+            paymentMethods.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    const razorpayOptions = document.getElementById('razorpay-options');
+                    const confirmBtn = document.getElementById('confirm-booking-btn');
+
+                    if (e.target.value === 'razorpay') {
+                        razorpayOptions.style.display = 'block';
+                        confirmBtn.textContent = paymentTranslations[currentLang].pay_now;
+                    } else {
+                        razorpayOptions.style.display = 'none';
+                        confirmBtn.textContent = paymentTranslations[currentLang].confirm_booking_btn;
+                    }
+                });
+            });
+
+            // Initial summary calculation
+            updateSummary();
+            
+            // Default to Razorpay as the initial payment method
+            const defaultPaymentMethod = document.querySelector('input[name="payment-method"][value="razorpay"]');
+            if (defaultPaymentMethod) {
+                defaultPaymentMethod.checked = true;
+                confirmBtn.textContent = paymentTranslations[currentLang].pay_now;
+            }
+        };
+    </script>
+    <script>
+        // Language switching functionality
+        const updateContent = (lang) => {
+            // Update all elements with data-key attributes
+            const elements = document.querySelectorAll('[data-key]');
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
+        .desktop-search-container {
+            display: none;
+            width: 25%;
+            align-items: center;
+            gap: 15px;
+            margin-right: 40px;
+        }
+        @media (min-width: 768px) {
+            .desktop-search-container { display: flex; }
+        }
+        
+        .desktop-search-bar {
+            display: flex;
+            width: 100%;
+            height: 40px;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: #f3f4f6;
+            border-radius: 9999px;
+            padding: 0.5rem 1rem;
+            border: 1px solid #e5e7eb;
+        }
+
+        .desktop-search-bar input {
+            background: transparent;
+            font-size: 1.3rem;
+            border: none;
+            outline: none;
+            color: var(--text-dark);
+        }
+
+        .location-detector-btn {
+            width: 20%;
+            background: none;
+            border: none;
+            color: var(--accent-orange);
+            padding: 0.5rem;
+            margin-left: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .location-detector-btn i{
+            width: 100%;
+        }
+        .location-detector-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Mobile Nav */
+        .mobile-header-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .mobile-menu-button {
+            background: none;
+            border: none;
+            color: var(--primary-green);
+            cursor: pointer;
+        }
+        @media (min-width: 768px) {
+            .mobile-menu-button { display: none; }
+        }
+        .mobile-nav-menu {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            padding: 1rem 0;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            margin-top: 10px;
+        }
+        .mobile-nav-menu a {
+            padding: 0.5rem 1rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+        .mobile-search-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: #f3f4f6;
+            border-radius: 9999px;
+            border: 1px solid #e5e7eb;
+        }
+        .mobile-search-container input {
+            background: transparent;
+            border: none;
+            outline: none;
+            width: 100%;
+            color: var(--text-dark);
+        }
+
+        /* User & Lang Switcher */
+        .user-menu-dropdown-container {
+            position: relative;
+            width: 5%;
+        }
+        .user-menu-button {
+            background: var(--soft-earth-tone);
+            border: none;
+            color: var(--primary-green);
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .user-menu-button:hover { background-color: rgba(23, 60, 28, 0.1); }
+        .user-dropdown {
+            position: absolute;
+            top: 112%;
+            right: 0;
+            margin-top: 10px;
+            width: 350px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 10;
+            display: none;
+        }
+        .user-dropdown.show-dropdown {
+            display: block;
+        }
+        .lang-switcher-container { 
+            padding: 10px;
+            width: 50%;
+            margin: 0 auto;
+        }
+        .lang-switcher {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--text-dark);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .lang-switcher button {
+            background: none;
+            border: none;
+            color: var(--text-dark);
+            padding: 15px 18px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            font-family: 'Noto Sans Kannada', sans-serif;
+            font-size: 1.2rem;
+            flex: 1;
+        }
+        .lang-switcher button.active {
+            background-color: var(--primary-green);
+            color: var(--text-light);
+            font-weight: 700;
+        }
+        .user-dropdown-link {
+            display: block;
+            padding: 15px;
+            margin-left: 10px;
+            font-size: 1.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: background-color 0.3s;
+        }
+        .user-dropdown-link:hover { background-color: #f3f4f6; }
+
+        .logout-btn{
+            background-color: #173c1c;
+            margin: 0 auto;
+            color: white;
+            border-radius: 15px;
+            height: 50px;
+            width: 160px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .logout-btn:hover{
+            background-color: var(--soft-earth-tone);
+            color: var(--text-dark);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 0rem 1rem 1rem;
+            max-width: 2000px;
+            margin: 0 auto;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .section-heading {
+            font-size: 2.8rem;
+            color: var(--primary-green);
+            margin-bottom: 2rem;
+            padding: 0;
+            text-align: center;
+        }
+        
+        /* Operator Booking Summary Styles */
+        .booking-summary-container {
+            margin: 10px auto;
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            /* align-items: center; */
+            /* grid-template-columns: 1fr; */
+            gap: 2rem;
+        }
+
+        @media (min-width: 1024px) {
+            .booking-summary-container {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+        
+        .booking-details-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+
+        .booking-summary-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 2rem;
+            height: fit-content;
+        }
+
+        .operator-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .operator-info {
+                flex-direction: row;
+                text-align: left;
+                align-items: flex-start;
+                gap: 2rem;
+            }
+        }
+
+        .operator-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--soft-earth-tone);
+        }
+
+        .operator-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            font-weight: 700;
+        }
+
+        .status-dot-available {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #16a34a; /* Tailwind's green-600 */
+        }
+        
+        .status-dot-unavailable {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #dc2626; /* Tailwind's red-600 */
+        }
+
+        .price-summary-table div {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+        }
+
+        .total-amount-row {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 1rem !important;
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .proceed-button {
+            background-color: var(--primary-green);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 1.5rem;
+        }
+        .proceed-button:hover {
+            background-color: #215c26; /* A slightly darker green */
+        }
+        
+        .action-button {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .edit-button {
+            color: #777;
+        }
+        .edit-button:hover {
+            color: var(--primary-green);
+        }
+        
+        .remove-button {
+            color: #dc2626;
+        }
+        .remove-button:hover {
+            color: #777;
+        }
+
+        .booking-details-row {
+            border-top: 1px solid #e5e7eb; 
+            padding-top: 1.5rem; 
+            margin-top: 1.5rem;
+        }
+
+        .booking-details-grid {
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 1rem;
+        }
+
+        .booking-details-input-container {
+            font-size: 1rem; 
+            font-weight: 700; 
+            color: #777; 
+            display: block; 
+            margin-bottom: 0.5rem;
+        }
+
+        .booking-details-input {
+            width: 97%; 
+            padding: 0.8rem; 
+            border-radius: 8px; 
+            border: 1px solid #ccc; 
+            font-size: 1rem;
+        }
+        
+        .booking-details-actions {
+            display: flex; 
+            justify-content: flex-start; 
+            gap: 1rem; 
+            margin-top: 1.5rem;
+        }
+
+        .operator-info-text {
+            font-size: 1.1rem;
+        }
+        
+        .operator-info-contact {
+            font-size: 1.1rem;
+            color: #777;
+        }
+
+        .operator-info-title {
+            font-size: 1.8rem; 
+            margin-top: 0; 
+            margin-bottom: 0.5rem;
+        }
+
+        .price-per-day-text {
+            font-size: 1.3rem; 
+            font-weight: 700; 
+            margin: 1rem 0;
+        }
+
+        /* Footer */
+        footer {
+            width: 100%;
+            background-color: var(--primary-green);
+            color: var(--text-light);
+            text-align: center;
+            padding: 20px 0 5px;
+        }
+
+        .legal-links p{
+            font-size: 1.3rem;
+            color: var(--text-light);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 10px;
+            margin-top: 5px;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .desktop-nav, .desktop-search-container { display: none; }
+            .mobile-header-group { flex-grow: 1; }
+            header { flex-wrap: wrap; height: auto; }
+            .user-menu-dropdown-container { order: 2; }
+            .user-dropdown { position: static; width: 100%; margin-top: 10px; }
+            .mobile-nav-menu.active { display: flex; }
+            .main-content { padding-top: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="mobile-header-group">
+            <button id="mobile-menu-button" class="mobile-menu-button">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo-text font-poppins">
+                <img src="/images/homelogo2.png" alt="AgroRent">
+            </div>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <nav class="desktop-nav">
+            <a href="#" class="nav-link" data-text-en="Home" data-text-kn="ಹೋಮ್">Home</a>
+            <a href="#" class="nav-link" data-text-en="Add Equipment" data-text-kn="ಸಲಕರಣೆ ಸೇರಿಸಿ">Add Equipment</a>
+            <a href="#" class="nav-link" data-text-en="Hire Operator" data-text-kn="ಆಪರೇಟರ್ ನೇಮಿಸಿ">Hire Operator</a>
+            <a href="#" class="nav-link" data-text-en="Knowledge Hub" data-text-kn="ಜ್ಞಾನ ಕೇಂದ್ರ">Knowledge Hub</a>
+            <a href="#" class="nav-link" data-text-en="Equipment Videos" data-text-kn="ಸಲಕರಣೆ ವಿಡಿಯೋಗಳು">Equipment Videos</a>
+        </nav>
+
+        <div class="user-menu-dropdown-container">
+            <button id="user-menu-button" class="user-menu-button">
+                <i class="fas fa-user-circle fa-4x"></i>
+            </button>
+            <div id="user-dropdown" class="user-dropdown">
+                <div class="lang-switcher-container">
+                    <div class="lang-switcher">
+                        <button id="lang-en" class="active">English</button>
+                        <button id="lang-kn">ಕನ್ನಡ</button>
+                    </div>
+                </div>
+                <a href="#" class="user-dropdown-link" data-text-en="Account" data-text-kn="ಖಾತೆ">Account</a>
+                <a href="#" class="user-dropdown-link" data-text-en="Booking History" data-text-kn="ಬುಕಿಂಗ್ ಇತಿಹಾಸ">Booking History</a>
+                <a href="operator-booking-history.html" class="user-dropdown-link"><span data-key="operator_booking_history">Operator Booking History</span></a>
+                <a href="#" class="user-dropdown-link" data-text-en="Payment History" data-text-kn="ಪಾವತಿ ಇತಿಹಾಸ">Payment History</a>
+                <button type="button" class="user-dropdown-link logout-btn" 
+                    data-text-en="Logout" 
+                    data-text-kn="ಲಾಗ್ ಔಟ್">
+                    Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Nav -->
+        <nav id="mobile-nav" class="mobile-nav-menu hidden">
+            <a href="#" class="nav-link" data-text-en="Home" data-text-kn="ಹೋಮ್">Home</a>
+            <a href="#" class="nav-link" data-text-en="Add Equipment" data-text-kn="ಸಲಕರಣೆ ಸೇರಿಸಿ">Add Equipment</a>
+            <a href="#" class="nav-link" data-text-en="Hire Operator" data-text-kn="ಆಪರೇಟರ್ ನೇಮಿಸಿ">Hire Operator</a>
+            <a href="#" class="nav-link" data-text-en="Knowledge Hub" data-text-kn="ಜ್ಞಾನ ಕೇಂದ್ರ">Knowledge Hub</a>
+            <a href="#" class="nav-link" data-text-en="Equipment Videos" data-text-kn="ಸಲಕರಣೆ ವಿಡಿಯೋಗಳು">Equipment Videos</a>
+            <div class="mobile-search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input-mobile" data-text-en="Search for equipment..." data-text-kn="ಉಪಕರಣಗಳನ್ನು ಹುಡುಕಿ..." placeholder="Search for equipment...">
+            </div>
+            <button class="location-detector-btn">
+                <i class="fas fa-location-arrow animate-pulse-slow"></i>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <h1 class="section-heading font-poppins" data-text-en="Your Operator Booking" data-text-kn="ನಿಮ್ಮ ಆಪರೇಟರ್ ಬುಕಿಂಗ್">Your Operator Booking</h1>
+        <div class="booking-summary-container">
+            <!-- Left Side: Operator Details Card -->
+            <div class="booking-details-card">
+                <div class="operator-info">
+                    <!-- Operator Photo Placeholder -->
+                    <img src="https://placehold.co/120x120/173c1c/e8f5e9?text=OPERATOR" alt="Operator Photo" class="operator-photo">
+                    
+                    <div>
+                        <h2 class="font-poppins operator-info-title">Jane Smith</h2>
+                        <div class="operator-info-text">
+                            <i class="fa-solid fa-location-dot" style="color: #777; margin-right: 0.3rem;"></i>
+                            <span data-text-en="Green Valley Farms" data-text-kn="ಗ್ರೀನ್ ವ್ಯಾಲಿ ಫಾರ್ಮ್ಸ್">Green Valley Farms</span>
+                        </div>
+                        <div class="operator-status">
+                            <span class="status-dot-available"></span>
+                            <span style="font-size: 1.1rem; color: #16a34a;" data-text-en="Available" data-text-kn="ಲಭ್ಯವಿದೆ">Available</span>
+                        </div>
+                        <p class="price-per-day-text"><span data-text-en="₹1,200 per Day" data-text-kn="₹1,200/ದಿನ">₹1,200 per Day</span></p>
+                        <p class="operator-info-contact"><span data-text-en="Contact:" data-text-kn="ಸಂಪರ್ಕ:">Contact:</span> 987-654-3210</p>
+                    </div>
+                </div>
+
+                <div class="booking-details-row">
+                    <h3 class="font-poppins" style="font-size: 1.5rem; margin-top: 0; margin-bottom: 1rem;" data-text-en="Booking Details" data-text-kn="ಬುಕಿಂಗ್ ವಿವರಗಳು">Booking Details</h3>
+                    <div class="booking-details-grid">
+                        <div>
+                            <label for="start-date" class="booking-details-input-container" data-text-en="Start Date" data-text-kn="ಪ್ರಾರಂಭ ದಿನಾಂಕ">Start Date</label>
+                            <input type="date" id="start-date" class="booking-details-input" required>
+                        </div>
+                        <div>
+                            <label for="duration" class="booking-details-input-container" data-text-en="Duration (Days)" data-text-kn="ಅವಧಿ (ದಿನಗಳು)">Duration (Days)</label>
+                            <input type="number" id="duration" class="booking-details-input" value="1" min="1" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- <div class="booking-details-actions">
+                    <button class="action-button edit-button" data-text-en="Edit Booking" data-text-kn="ಬುಕಿಂಗ್ ಸಂಪಾದಿಸಿ">
+                        <i class="fa-solid fa-pen-to-square"></i> <span data-text-en="Edit Booking" data-text-kn="ಬುಕಿಂಗ್ ಸಂಪಾದಿಸಿ">Edit Booking</span>
+                    </button>
+                    <button class="action-button remove-button" data-text-en="Remove" data-text-kn="ತೆಗೆದುಹಾಕಿ">
+                        <i class="fa-solid fa-trash-can"></i> <span data-text-en="Remove" data-text-kn="ತೆಗೆದುಹಾಕಿ">Remove</span>
+                    </button>
+                </div> -->
+            </div>
+
+            <!-- Right Side: Price Summary Panel -->
+            <div class="booking-summary-card">
+                <h3 class="font-poppins" style="font-size: 1.8rem; margin-top: 0; margin-bottom: 1.5rem;" data-text-en="Price Summary" data-text-kn="ಬೆಲೆ ಸಾರಾಂಶ">Price Summary</h3>
+                <div class="price-summary-table">
+                    <div>
+                        <span style="color: #555;"><span id="price-per-day-label" data-text-en="Price per Day" data-text-kn="ದಿನಕ್ಕೆ ಬೆಲೆ">Price per Day</span> × <span id="days-count">1</span> <span id="day-label" data-text-en="Day" data-text-kn="ದಿನ">Day</span></span>
+                        <span style="font-weight: 700; color: var(--primary-green);">₹<span id="sub-total">1000.00</span></span>
+                    </div>
+                    <div>
+                        <span style="color: #555;" data-text-en="Platform Fee" data-text-kn="ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಶುಲ್ಕ">Platform Fee</span>
+                        <span style="font-weight: 700; color: var(--primary-green);">₹<span id="platform-fee">30.00</span></span>
+                    </div>
+                </div>
+                <div class="total-amount-row">
+                    <span data-text-en="Total Amount" data-text-kn="ಒಟ್ಟು ಮೊತ್ತ">Total Amount</span>
+                    <span style="color: var(--primary-green);">₹<span id="total-amount">1250.00</span></span>
+                </div>
+                <button class="proceed-button" data-text-en="Proceed to Payment" data-text-kn="ಪಾವತಿಗೆ ಮುಂದುವರಿಯಿರಿ">Proceed to Payment</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="legal-links">
+            <p data-text-en="&copy; 2024 AgroRent. All rights reserved." data-text-kn="&copy; 2024 ಮಾರ್ಫ್. ಎಲ್ಲಾ ಹಕ್ಕುಗಳನ್ನು ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ.">&copy; 2024 AgroRent. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Language switching logic (from your provided dashboard code)
+        const translations = {
+            en: {
+                home: 'Home',
+                add_equipment: 'Add Equipment',
+                hire_operator: 'Hire Operator',
+                knowledge_hub: 'Knowledge Hub',
+                equipment_videos: 'Equipment Videos',
+                search_placeholder: 'Search for equipment...',
+                account: 'Account',
+                booking_history: 'Booking History',
+                payment_history: 'Payment History',
+                logout: 'Logout',
+                booking_title: 'Your Operator Booking',
+                location: 'Green Valley Farms',
+                available: 'Available',
+                price_per_day_text: '₹1,200 per Day',
+                contact: 'Contact:',
+                booking_details_title: 'Booking Details',
+                start_date: 'Start Date',
+                duration_days: 'Duration (Days)',
+                edit_booking: 'Edit Booking',
+                remove: 'Remove',
+                price_summary_title: 'Price Summary',
+                price_per_day_label: 'Price per Day',
+                platform_fee: 'Platform Fee',
+                total_amount: 'Total Amount',
+                proceed_to_payment: 'Proceed to Payment',
+                day_singular: 'Day',
+                day_plural: 'Days'
+            },
+            kn: {
+                home: 'ಹೋಮ್',
+                add_equipment: 'ಸಲಕರಣೆ ಸೇರಿಸಿ',
+                hire_operator: 'ಆಪರೇಟರ್ ನೇಮಿಸಿ',
+                knowledge_hub: 'ಜ್ಞಾನ ಕೇಂದ್ರ',
+                equipment_videos: 'ಸಲಕರಣೆ ವಿಡಿಯೋಗಳು',
+                search_placeholder: 'ಉಪಕರಣಗಳನ್ನು ಹುಡುಕಿ...',
+                account: 'ಖಾತೆ',
+                booking_history: 'ಬುಕಿಂಗ್ ಇತಿಹಾಸ',
+                payment_history: 'ಪಾವತಿ ಇತಿಹಾಸ',
+                logout: 'ಲಾಗ್ ಔಟ್',
+                booking_title: 'ನಿಮ್ಮ ಆಪರೇಟರ್ ಬುಕಿಂಗ್',
+                location: 'ಗ್ರೀನ್ ವ್ಯಾಲಿ ಫಾರ್ಮ್ಸ್',
+                available: 'ಲಭ್ಯವಿದೆ',
+                price_per_day_text: '₹1,200/ದಿನ',
+                contact: 'ಸಂಪರ್ಕ:',
+                booking_details_title: 'ಬುಕಿಂಗ್ ವಿವರಗಳು',
+                start_date: 'ಪ್ರಾರಂಭ ದಿನಾಂಕ',
+                duration_days: 'ಅವಧಿ (ದಿನಗಳು)',
+                edit_booking: 'ಬುಕಿಂಗ್ ಸಂಪಾದಿಸಿ',
+                remove: 'ತೆಗೆದುಹಾಕಿ',
+                price_summary_title: 'ಬೆಲೆ ಸಾರಾಂಶ',
+                price_per_day_label: 'ದಿನಕ್ಕೆ ಬೆಲೆ',
+                platform_fee: 'ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಶುಲ್ಕ',
+                total_amount: 'ಒಟ್ಟು ಮೊತ್ತ',
+                proceed_to_payment: 'ಪಾವತಿಗೆ ಮುಂದುವರಿಯಿರಿ',
+                day_singular: 'ದಿನ',
+                day_plural: 'ದಿನಗಳು'
+            }
+        };
+
+        const updateContent = (lang) => {
+            const elements = document.querySelectorAll('[data-text-en]');
+            elements.forEach(el => {
+                const translationKey = el.getAttribute(`data-text-${lang}`);
+                if (translationKey) {
+                    el.textContent = translationKey;
+                }
+            });
+
+            const placeholders = document.querySelectorAll('input[data-text-en]');
+            placeholders.forEach(el => {
+                const placeholderText = el.getAttribute(`data-text-${lang}`);
+                if (placeholderText) {
+                    el.placeholder = placeholderText;
+                }
+            });
+            
+            calculateTotal();
+        };
+
+        const switchLanguage = (lang) => {
+            updateContent(lang);
+            const langEnBtn = document.getElementById('lang-en');
+            const langKnBtn = document.getElementById('lang-kn');
+            if (lang === 'en') {
+                if (langEnBtn) langEnBtn.classList.add('active');
+                if (langKnBtn) langKnBtn.classList.remove('active');
+                document.documentElement.lang = 'en';
+            } else {
+                if (langKnBtn) langKnBtn.classList.add('active');
+                if (langEnBtn) langEnBtn.classList.remove('active');
+                document.documentElement.lang = 'kn';
+            }
+        };
+
+        // DOM event listeners are attached here
+        const userMenuButton = document.getElementById('user-menu-button');
+        const userDropdown = document.getElementById('user-dropdown');
+        if (userMenuButton) {
+            userMenuButton.addEventListener('click', (event) => {
+                userDropdown.classList.toggle('show-dropdown');
+                event.stopPropagation();
+            });
+        }
+
+        document.addEventListener('click', (event) => {
+            if (userDropdown && !userDropdown.contains(event.target) && !userMenuButton.contains(event.target)) {
+                userDropdown.classList.remove('show-dropdown');
+            }
+        });
+    </script>
+</body>
+</html>

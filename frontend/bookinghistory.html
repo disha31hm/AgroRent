@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-key="title">AgroRent Booking History</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/906faa9c3f.js" crossorigin="anonymous"></script>
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary-green: #173c1c;
+            --soft-earth-tone: #e8f5e9;
+            --accent-orange: #FFA500;
+            --accent-dark: #CC8400;
+            --text-dark: #173c1c;
+            --text-light: #fff;
+        }
+
+        /* Typography & General Styles */
+        body {
+            font-family: 'Poppins', 'Noto Sans Kannada', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
+            background-color: var(--soft-earth-tone);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .font-kannada { font-family: 'Noto Sans Kannada', sans-serif; }
+        
+        .container {
+            max-width: 2000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .hidden { display: none !important; }
+
+        /* Animations */
+        .animate-pulse-slow {
+            animation: pulse-glow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% {
+                filter: drop-shadow(0 0 1px rgba(255, 165, 0, 0.4));
+                transform: scale(1);
+            }
+            50% {
+                filter: drop-shadow(0 0 8px rgba(255, 165, 0, 0.8));
+                transform: scale(1.05);
+            }
+        }
+        
+        /* Header and Navigation */
+        header {
+            background-color: white;
+            color: var(--text-dark);
+            padding: 1.5rem 20px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            height: 50px;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        .header-logo-text img{
+            width: 100%;
+            height: 70px;
+            margin-left: 40px;
+        }
+
+        /* Desktop Nav */
+        .desktop-nav {
+            display: none;
+            flex-grow: 1;
+            justify-content: center;
+            gap: 30px;
+        }
+        @media (min-width: 768px) {
+            .desktop-nav { display: flex; }
+        }
+        .desktop-nav a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.3rem;
+            position: relative;
+            transition: color 0.3s;
+            margin-right: 15px;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-green);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 4px;
+            background-color: #173c1c;
+            border-radius: 2px;
+            transition: width 0.3s ease, left 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
+        .desktop-search-container {
+            display: none;
+            width: 25%;
+            align-items: center;
+            gap: 15px;
+            margin-right: 40px;
+        }
+        @media (min-width: 768px) {
+            .desktop-search-container { display: flex; }
+        }
+        
+        .desktop-search-bar {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 40px;
+            gap: 0.5rem;
+            background-color: #f3f4f6;
+            border-radius: 9999px;
+            padding: 0.5rem 1rem;
+            border: 1px solid #e5e7eb;
+        }
+
+        .desktop-search-bar input {
+            background: transparent;
+            font-size: 1.3rem;
+            border: none;
+            outline: none;
+            color: var(--text-dark);
+        }
+
+        .location-detector-btn {
+            width: 20%;
+            background: none;
+            border: none;
+            color: var(--accent-orange);
+            padding: 0.5rem;
+            margin-left: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .location-detector-btn i{
+            width: 100%;
+        }
+        .location-detector-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Mobile Nav */
+        .mobile-header-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .mobile-menu-button {
+            background: none;
+            border: none;
+            color: var(--primary-green);
+            cursor: pointer;
+        }
+        @media (min-width: 768px) {
+            .mobile-menu-button { display: none; }
+        }
+        .mobile-nav-menu {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            padding: 1rem 0;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            margin-top: 10px;
+        }
+        .mobile-nav-menu a {
+            padding: 0.5rem 1rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+        .mobile-search-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: #f3f4f6;
+            border-radius: 9999px;
+            border: 1px solid #e5e7eb;
+        }
+        .mobile-search-container input {
+            background: transparent;
+            border: none;
+            outline: none;
+            width: 100%;
+            color: var(--text-dark);
+        }
+        .mobile-search-container input::placeholder {
+            color: #6b7280;
+        }
+
+        /* User & Lang Switcher */
+        .user-menu-dropdown-container {
+            position: relative;
+            width: 5%;
+        }
+        .user-menu-button {
+            background: var(--soft-earth-tone);
+            border: none;
+            color: var(--primary-green);
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .user-menu-button:hover { background-color: rgba(23, 60, 28, 0.1); }
+        .user-dropdown {
+            position: absolute;
+            top: 112%;
+            right: 0;
+            margin-top: 10px;
+            width: 350px;
+            background-color: white;
+            /* border: 1px solid var(--primary-green); */
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+        .lang-switcher-container { 
+            padding: 10px;
+            width: 50%;
+            margin: 0 auto;            
+        }
+        .lang-switcher {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--text-dark);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .lang-switcher button {
+            background: none;
+            border: none;
+            color: var(--text-dark);
+            padding: 15px 18px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            font-family: 'Noto Sans Kannada', sans-serif;
+            font-size: 1.2rem;
+            flex: 1;
+        }
+        .lang-switcher button.active {
+            background-color: var(--primary-green);
+            color: var(--text-light);
+            font-weight: 700;
+        }
+        .user-dropdown-link {
+            display: block;
+            padding: 15px;
+            margin-left: 10px;
+            font-size: 1.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: background-color 0.3s;
+        }
+        .user-dropdown-link:hover { background-color: #f3f4f6; }
+
+        .logout-btn{
+            background-color: #173c1c;
+            margin: 0 auto;
+            color: white;
+            border-radius: 15px;
+            height: 50px;
+            width: 160px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .logout-btn:hover{
+            background-color: var(--soft-earth-tone);
+            color: var(--text-dark);
+        }
+
+
+        /* Main Content */
+        .main-content {
+            padding: 0rem 1rem 1rem;
+            max-width: 1500px;
+            margin: 0 auto;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        .main-content h2{
+            text-align: center;
+            margin: 1rem auto;
+        }
+        .section-heading {
+            font-size: 2.8rem;
+            color: var(--primary-green);
+            margin-bottom: 2rem;
+        }
+        
+        /* Booking History Grid */
+        .booking-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+        .filter-tab {
+            padding: 10px 20px;
+            border: 1px solid var(--primary-green);
+            background: white;
+            color: var(--primary-green);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .filter-tab.active,
+        .filter-tab:hover {
+            background: var(--primary-green);
+            color: white;
+            border: none;
+        }
+        .booking-card {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border: 1px solid rgba(23, 60, 28, 0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+        .booking-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .booking-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        
+        .booking-card-content {
+            display: flex;
+            flex-direction: row;
+            height: 100%;
+        }
+        
+        .booking-image-container {
+            flex: 0 0 280px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .booking-details {
+            flex: 1;
+            padding: 1.8rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .booking-header {
+            margin-bottom: 1rem;
+        }
+        
+        .booking-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin: 0 0 0.5rem 0;
+            line-height: 1.3;
+        }
+        
+        .booking-type-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-green), #2d5a32);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .booking-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin: 1rem 0;
+        }
+        
+        .booking-info-item {
+            display: flex;
+            align-items: center;
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+        
+        .booking-info-item i {
+            width: 20px;
+            color: var(--accent-orange);
+            margin-right: 0.8rem;
+            font-size: 1rem;
+        }
+        
+        .booking-info-item strong {
+            color: var(--primary-green);
+            margin-right: 0.5rem;
+        }
+        
+        .booking-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .total-cost {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .total-cost i {
+            color: var(--accent-orange);
+        }
+        
+        /* Status Labels */
+        .status-label, .status-badge {
+            margin-top: 10px;
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: capitalize;
+            letter-spacing: 0.3px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .status-completed {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+            border: 1px solid #28a745;
+        }
+        
+        .status-confirmed {
+            background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+            color: #0c5460;
+            border: 1px solid #17a2b8;
+        }
+        
+        .status-ongoing {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            color: #856404;
+            border: 1px solid #ffc107;
+        }
+        
+        .status-cancelled {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+            border: 1px solid #dc3545;
+        }
+        
+        .status-pending {
+            background: linear-gradient(135deg, #e7f3ff, #cfe3ff);
+            color: #0056b3;
+            border: 1px solid #007bff;
+        }
+        
+        .booking-content {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .booking-content h3 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem;
+        }
+        .booking-content p {
+            font-size: 1.2rem;
+            color: #6b7280;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .status-label {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            margin-top: 1rem;
+        }
+        .status-completed { background-color: #2c6032; }
+        .status-ongoing { background-color: #FFA500; }
+        .status-cancelled { background-color: #d9534f; }
+        .view-details-btn {
+            background-color: var(--primary-green);
+            color: var(--text-light);
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+            margin-top: 1rem;
+            display: block;
+            width: 100%;
+        }
+        .view-details-btn:hover { 
+            background-color: var(--soft-earth-tone); 
+            color: var(--text-dark);
+        }
+        .no-bookings-message {
+            text-align: center;
+            padding: 4rem 2rem;
+            background-color: white;
+            border: 1px solid var(--primary-green);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .no-bookings-message p {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Footer */
+        footer {
+            width: 100%;
+            background-color: var(--primary-green);
+            color: var(--text-light);
+            text-align: center;
+            padding: 20px 0 5px;
+            bottom: 0;
+            left: 0;
+        }
+        .legal-links p {
+            font-size: 1.3rem;
+            color: var(--text-light);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 10px;
+            margin-top: 5px;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .desktop-nav, .desktop-search-container { display: none; }
+            .mobile-header-group { flex-grow: 1; }
+            header { flex-wrap: wrap; height: auto; }
+            .user-menu-dropdown-container { order: 2; }
+            .user-dropdown { position: static; width: 100%; margin-top: 10px; }
+            .mobile-nav-menu.active { display: flex; }
+            .main-content { padding-top: 1rem; }
+            .form-card { padding: 1rem; }
+            .form-buttons { flex-direction: column; }
+            .form-buttons button { width: 100%; }
+            
+            .booking-card-content {
+                flex-direction: column;
+            }
+            
+            .booking-image-container {
+                flex: none;
+                height: 200px;
+            }
+            
+            .booking-image {
+                height: 200px;
+                border-radius: 0;
+            }
+            
+            .booking-details {
+                padding: 1.2rem;
+            }
+            
+            .booking-info-grid {
+                grid-template-columns: 1fr;
+                gap: 0.6rem;
+            }
+            
+            .booking-footer {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .total-cost {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="mobile-header-group">
+            <button id="mobile-menu-button" class="mobile-menu-button">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="header-logo-text font-poppins"><img src="/images/homelogo2.png" alt="AgroRent"></div>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <nav class="desktop-nav">
+            <a href="dash.html" class="nav-link" data-key="nav_home">Home</a>
+            <a href="addequipment.html" class="nav-link" data-key="nav_add_equipment">Add Equipment</a>
+            <a href="hireoperators.html" class="nav-link" data-key="nav_hire_operator">Hire Operator</a>
+            <a href="addsolutions.html" class="nav-link" data-key="nav_farm_solutions">Farm Solutions</a>
+            <a href="addvideos.html" class="nav-link" data-key="nav_equipment_videos">Equipment Videos</a>
+        </nav>
+
+        <div class="desktop-search-container">
+            <div class="desktop-search-bar">
+                <i class="fas fa-search fa-2x"></i>
+                <input type="text" id="search-input-desktop" data-key-placeholder="search_placeholder" placeholder="Search...">
+            </div>
+            <button class="location-detector-btn">
+                <i class="fas fa-location-arrow animate-pulse-slow fa-3x"></i>
+            </button>
+        </div>
+
+        <div class="user-menu-dropdown-container">
+            <button id="user-menu-button" class="user-menu-button">
+                <i class="fas fa-user-circle fa-4x"></i>
+            </button>
+            <div id="user-dropdown" class="user-dropdown hidden">
+                <div class="lang-switcher-container">
+                    <div class="lang-switcher">
+                        <button id="lang-en" class="active">English</button>
+                        <button id="lang-kn">ಕನ್ನಡ</button>
+                    </div>
+                </div>
+                <a href="account.html" class="user-dropdown-link"><span data-key="account">Account</span></a>
+                <a href="bookinghistory.html" class="user-dropdown-link"><span data-key="booking_history">Booking History</span></a>
+                <a href="payment-history.html" class="user-dropdown-link"><span data-key="payment_history">Payment History</span></a>
+                <button type="button" class="user-dropdown-link logout-btn" 
+                    data-key="logout"> 
+                    Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Nav -->
+        <nav id="mobile-nav" class="mobile-nav-menu">
+            <a href="dash.html" class="nav-link" data-key="nav_home">Home</a>
+            <a href="addequipment.html" class="nav-link" data-key="nav_add_equipment">Add Equipment</a>
+            <a href="hireoperators.html" class="nav-link" data-key="nav_hire_operator">Hire Operator</a>
+            <a href="addsolutions.html" class="nav-link" data-key="nav_farm_solutions">Farm Solutions</a>
+            <a href="addvideos.html" class="nav-link" data-key="nav_equipment_videos">Equipment Videos</a>
+            <div class="mobile-search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input-mobile" data-key-placeholder="search_placeholder" placeholder="Search...">
+            </div>
+            <button class="location-detector-btn">
+                <i class="fas fa-location-arrow animate-pulse-slow"></i>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 class="section-heading font-poppins" id="page-title" data-key="main_title">
+                All Booking History
+            </h2>
+            
+            <!-- PDF Download Buttons -->
+            <div style="display: flex; gap: 10px;">
+                <button id="download-equipment-pdf-btn" class="pdf-download-btn" onclick="downloadPDF('equipment')" 
+                        style="background: linear-gradient(135deg, var(--primary-green), #2d5a2d); color: white; border: none; 
+                               padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; 
+                               display: flex; align-items: center; gap: 6px; transition: all 0.3s; font-size: 0.85rem;">
+                    <i class="fas fa-file-pdf"></i>
+                    <span data-key="download_equipment_pdf">Equipment PDF</span>
+                </button>
+                <button id="download-operator-pdf-btn" class="pdf-download-btn" onclick="downloadPDF('operator')" 
+                        style="background: linear-gradient(135deg, #8B4513, #A0522D); color: white; border: none; 
+                               padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; 
+                               display: flex; align-items: center; gap: 6px; transition: all 0.3s; font-size: 0.85rem;">
+                    <i class="fas fa-file-pdf"></i>
+                    <span data-key="download_operator_pdf">Operator PDF</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Filter Tabs -->
+        <div class="filter-tabs" style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px;">
+            <button id="tab-all" class="filter-tab active" onclick="filterBookings('all')" 
+                    style="padding: 10px 20px; border: none; background: var(--primary-green); color: white; 
+                           border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+                <i class="fas fa-list"></i> <span data-key="tab_all">All Bookings</span>
+            </button>
+            <button id="tab-equipment" class="filter-tab" onclick="filterBookings('equipment')" 
+                    style="padding: 10px 20px; border: 1px solid var(--primary-green); background: white; color: var(--primary-green); 
+                           border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+                <i class="fas fa-cog"></i> <span data-key="tab_equipment">Equipment</span>
+            </button>
+            <button id="tab-operator" class="filter-tab" onclick="filterBookings('operator')" 
+                    style="padding: 10px 20px; border: 1px solid var(--primary-green); background: white; color: var(--primary-green); 
+                           border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+                <i class="fas fa-user"></i> <span data-key="tab_operator">Operators</span>
+            </button>
+        </div>
+        
+        <div id="booking-grid" class="booking-grid">
+            <!-- Booking cards will be dynamically inserted here -->
+        </div>
+        
+        <!-- No Bookings Message -->
+        <div id="no-bookings-message" class="no-bookings-message hidden">
+            <p data-key="no_bookings_text">No bookings found in your history.</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="legal-links">
+            <p data-key="footer_text">&copy; 2024 AgroRent. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const translations = {
+            en: {
+                title: 'AgroRent Booking History',
+                nav_home: 'Home',
+                nav_add_equipment: 'Add Equipment',
+                nav_hire_operator: 'Hire Operator',
+                nav_knowledge_hub: 'Knowledge Hub',
+                nav_farm_solutions: 'Farm Solutions',
+                nav_equipment_videos: 'Equipment Videos',
+                main_title: 'All Booking History',
+                main_title_kn: 'ಎಲ್ಲಾ ಬುಕಿಂಗ್ ಇತಿಹಾಸ',
+                download_equipment_pdf: 'Equipment PDF',
+                download_operator_pdf: 'Operator PDF',
+                tab_all: 'All Bookings',
+                tab_equipment: 'Equipment',
+                tab_operator: 'Operators',
+                booking_equipment_name: 'John Deere Tractor',
+                booking_equipment_type: 'Tractor',
+                booking_date: 'Booking Date',
+                booking_duration: 'Duration',
+                booking_price: 'Rental Price',
+                booking_location: 'Location',
+                status_completed: 'Completed',
+                status_ongoing: 'Ongoing',
+                status_cancelled: 'Cancelled',
+                view_details_btn: 'View Details',
+                no_bookings_text: 'No bookings found in your history.',
+                account: 'Account',
+                booking_history: 'Booking History',
+                payment_history: 'Payment History',
+                logout: 'Logout',
+                search_placeholder: 'Search...',
+                footer_text: '&copy; 2024 AgroRent. All rights reserved.'
+            },
+            kn: {
+                title: 'ಮಾರ್ಫ್ ಬುಕಿಂಗ್ ಇತಿಹಾಸ',
+                nav_home: 'ಹೋಮ್',
+                nav_add_equipment: 'ಸಲಕರಣೆ ಸೇರಿಸಿ',
+                nav_hire_operator: 'ಆಪರೇಟರ್ ನೇಮಿಸಿ',
+                nav_knowledge_hub: 'ಜ್ಞಾನ ಕೇಂದ್ರ',
+                nav_farm_solutions: 'ಕೃಷಿ ಪರಿಹಾರಗಳು',
+                nav_equipment_videos: 'ಉಪಕರಣ ವಿಡಿಯೋಗಳು',
+                main_title: 'ಬುಕಿಂಗ್ ಇತಿಹಾಸ',
+                main_title_kn: 'ಬುಕಿಂಗ್ ಇತಿಹಾಸ',
+                booking_equipment_name: 'ಜಾನ್ ಡೀರೆ ಟ್ರಾಕ್ಟರ್',
+                booking_equipment_type: 'ಟ್ರಾಕ್ಟರ್',
+                booking_date: 'ಬುಕಿಂಗ್ ದಿನಾಂಕ',
+                booking_duration: 'ಅವಧಿ',
+                booking_price: 'ಬಾಡಿಗೆ ಬೆಲೆ',
+                booking_location: 'ಸ್ಥಳ',
+                status_completed: 'ಪೂರ್ಣಗೊಂಡಿದೆ',
+                status_ongoing: 'ಪ್ರಗತಿಯಲ್ಲಿದೆ',
+                status_cancelled: 'ರದ್ದುಗೊಂಡಿದೆ',
+                view_details_btn: 'ವಿವರಗಳನ್ನು ವೀಕ್ಷಿಸಿ',
+                no_bookings_text: 'ನಿಮ್ಮ ಇತಿಹಾಸದಲ್ಲಿ ಯಾವುದೇ ಬುಕಿಂಗ್ ಕಂಡುಬಂದಿಲ್ಲ.',
+                account: 'ಖಾತೆ',
+                booking_history: 'ಬುಕಿಂಗ್ ಇತಿಹಾಸ',
+                payment_history: 'ಪಾವತಿ ಇತಿಹಾಸ',
+                logout: 'ಲಾಗ್ ಔಟ್',
+                search_placeholder: 'ಹುಡುಕಿ...',
+                footer_text: '&copy; 2024 ಮಾರ್ಫ್. ಎಲ್ಲಾ ಹಕ್ಕುಗಳನ್ನು ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ.'
+            }
+        };
+
+        // Global booking data
+        let bookingData = [];
+
+        // Function to fetch equipment bookings from API
+        async function fetchEquipmentBookings() {
+            try {
+                const userId = sessionStorage.getItem('user_id') || '4'; // Force to user 4 for testing
+                console.log('=== DEBUGGING BOOKING FETCH ===');
+                console.log('Fetching bookings for user_id:', userId);
+                console.log('SessionStorage user_id:', sessionStorage.getItem('user_id'));
+                console.log('Making API call to:', `http://127.0.0.1:5000/api/bookings?user_id=${userId}`);
+                
+                const response = await fetch(`http://127.0.0.1:5000/api/bookings?user_id=${userId}`);
+                console.log('API Response status:', response.status);
+                console.log('API Response ok:', response.ok);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('API Response data:', data);
+                    console.log('Number of bookings received:', data.length);
+                    bookingData = data.map(booking => ({
+                        id: booking.booking_id,
+                        image: booking.equipment_image_url || 'https://placehold.co/300x200/173c1c/e8f5e9?text=' + encodeURIComponent(booking.equipment_name),
+                        name: booking.equipment_name,
+                        type: 'Equipment',
+                        date: booking.start_date,
+                        duration: `${booking.duration_days} days`,
+                        price: `₹${booking.price_per_day}/day`,
+                        location: booking.equipment_location || 'Karnataka',
+                        status: 'completed',
+                        total_cost: booking.total_cost,
+                        end_date: booking.end_date,
+                        description: booking.equipment_description,
+                        contact: booking.equipment_contact
+                    }));
+                    return bookingData;
+                } else {
+                    console.error('Failed to fetch bookings:', response.statusText);
+                    // Fallback to static data for demonstration
+                    bookingData = [
+                        { id: 1, image: 'https://placehold.co/300x200/173c1c/e8f5e9?text=Tractor', name: 'John Deere Tractor', type: 'Tractor', date: '2024-05-20', duration: '3 days', price: '₹1500/day', location: 'Mandya, Karnataka', status: 'completed' },
+                        { id: 2, image: 'https://placehold.co/300x200/173c1c/e8f5e9?text=Rotavator', name: 'Rotavator', type: 'Rotavator', date: '2024-05-25', duration: '7 days', price: '₹800/day', location: 'Raichur, Karnataka', status: 'ongoing' },
+                        { id: 3, image: 'https://placehold.co/300x200/173c1c/e8f5e9?text=Sprayer', name: 'Sprayer', type: 'Sprayer', date: '2024-05-15', duration: '2 days', price: '₹500/day', location: 'Dharwad, Karnataka', status: 'cancelled' },
+                    ];
+                    return bookingData;
+                }
+            } catch (error) {
+                console.error('Error fetching bookings:', error);
+                // Fallback to static data for demonstration
+                bookingData = [
+                    { id: 1, image: 'https://placehold.co/300x200/173c1c/e8f5e9?text=Tractor', name: 'John Deere Tractor', type: 'Tractor', date: '2024-05-20', duration: '3 days', price: '₹1500/day', location: 'Mandya, Karnataka', status: 'completed' },
+                    { id: 2, image: 'https://placehold.co/300x200/173c1c/e8f5e9?text=Rotavator', name: 'Rotavator', type: 'Rotavator', date: '2024-05-25', duration: '7 days', price: '₹800/day', location: 'Raichur, Karnataka', status: 'ongoing' },
+                    { id: 3, image: 'https://placehold.co/300x200/173c1c/e8f5e9?text=Sprayer', name: 'Sprayer', type: 'Sprayer', date: '2024-05-15', duration: '2 days', price: '₹500/day', location: 'Dharwad, Karnataka', status: 'cancelled' },
+                ];
+                return bookingData;
+            }
+        }
+
+        // Function to download equipment bookings PDF
+        async function downloadEquipmentBookingsPDF() {
+            try {
+                const downloadBtn = document.getElementById('download-pdf-btn');
+                const originalText = downloadBtn.innerHTML;
+                
+                // Show loading state
+                downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Generating PDF...</span>';
+                downloadBtn.disabled = true;
+                
+                const userId = sessionStorage.getItem('user_id') || '1';
+                const response = await fetch(`http://127.0.0.1:5000/api/bookings/pdf?user_id=${userId}`);
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = `equipment_bookings_${new Date().toISOString().split('T')[0]}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    
+                    // Show success message
+                    downloadBtn.innerHTML = '<i class="fas fa-check"></i> <span>Downloaded!</span>';
+                    setTimeout(() => {
+                        downloadBtn.innerHTML = originalText;
+                        downloadBtn.disabled = false;
+                    }, 2000);
+                } else {
+                    throw new Error('Failed to generate PDF');
+                }
+            } catch (error) {
+                console.error('Error downloading PDF:', error);
+                alert('Failed to download PDF. Please try again.');
+                
+                // Reset button
+                const downloadBtn = document.getElementById('download-pdf-btn');
+                downloadBtn.innerHTML = '<i class="fas fa-file-pdf"></i> <span data-key="download_pdf">Download PDF</span>';
+                downloadBtn.disabled = false;
+            }
+        }
+
+        let currentLang = 'en';
+
+        // Function to fetch operator bookings from API
+        async function fetchOperatorBookings() {
+            try {
+                const userId = sessionStorage.getItem('user_id') || '1';
+                const response = await fetch(`http://127.0.0.1:5000/api/operator-bookings?user_id=${userId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.map(booking => ({
+                        id: booking.booking_id,
+                        image: 'https://placehold.co/300x200/173c1c/e8f5e9?text=' + encodeURIComponent(booking.operator_name),
+                        name: booking.operator_name,
+                        type: 'Operator',
+                        date: booking.start_date,
+                        duration: `${booking.working_days} days`,
+                        price: `₹${booking.rate_per_day}/day`,
+                        location: booking.operator_location || 'Karnataka',
+                        status: booking.status || 'confirmed',
+                        total_cost: booking.total_amount,
+                        contact: booking.operator_contact,
+                        specialization: booking.specialization,
+                        experience: booking.experience,
+                        work_type: booking.work_type,
+                        field_size: booking.field_size,
+                        payment_method: booking.payment_method,
+                        payment_id: booking.payment_id,
+                        created_at: booking.created_at
+                    }));
+                } else {
+                    console.error('Failed to fetch operator bookings:', response.statusText);
+                    return [];
+                }
+            } catch (error) {
+                console.error('Error fetching operator bookings:', error);
+                return [];
+            }
+        }
+
+        // Function to fetch all bookings (equipment + operators)
+        async function fetchAllBookings() {
+            try {
+                const [equipmentBookings, operatorBookings] = await Promise.all([
+                    fetchEquipmentBookings(),
+                    fetchOperatorBookings()
+                ]);
+                
+                allBookings = [...equipmentBookings, ...operatorBookings];
+                
+                // If no bookings found, try to set up test data
+                if (allBookings.length === 0) {
+                    console.log('No bookings found, attempting to create test data...');
+                    try {
+                        const setupResponse = await fetch('http://127.0.0.1:5000/api/setup-test-bookings', {
+                            method: 'POST'
+                        });
+                        if (setupResponse.ok) {
+                            console.log('Test data created, refetching bookings...');
+                            // Retry fetching after test data creation
+                            const [newEquipmentBookings, newOperatorBookings] = await Promise.all([
+                                fetchEquipmentBookings(),
+                                fetchOperatorBookings()
+                            ]);
+                            allBookings = [...newEquipmentBookings, ...newOperatorBookings];
+                        }
+                    } catch (setupError) {
+                        console.log('Could not create test data:', setupError);
+                    }
+                }
+                
+                return allBookings;
+            } catch (error) {
+                console.error('Error fetching all bookings:', error);
+                allBookings = [];
+                return allBookings;
+            }
+        }
+
+        // Function to render bookings in the UI
+        function renderBookings(bookings) {
+            const bookingList = document.getElementById('booking-grid');
+            if (!bookingList) return;
+
+            if (bookings.length === 0) {
+                bookingList.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-calendar-times text-6xl text-gray-400 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-600 mb-2" data-key="no_bookings">No bookings found</h3>
+                        <p class="text-gray-500" data-key="no_bookings_desc">Start booking equipment or operators to see your history here</p>
+                    </div>
+                `;
+                return;
+            }
+
+            bookingList.innerHTML = bookings.map(booking => `
+                <div class="booking-card">
+                    <div class="booking-card-content">
+                        <div class="booking-image-container">
+                            <img src="${booking.image}" alt="${booking.name}" class="booking-image">
+                        </div>
+                        <div class="booking-details">
+                            <div class="booking-header">
+                                <h3 class="booking-title">${booking.name}</h3>
+                                <span class="booking-type-badge">${booking.type}</span>
+                            </div>
+                            
+                            <div class="booking-info-grid">
+                                <div class="booking-info-item">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <strong>Date:</strong> ${booking.date}
+                                </div>
+                                <div class="booking-info-item">
+                                    <i class="fas fa-clock"></i>
+                                    <strong>Duration:</strong> ${booking.duration}
+                                </div>
+                                <div class="booking-info-item">
+                                    <i class="fas fa-rupee-sign"></i>
+                                    <strong>Rate:</strong> ${booking.price}
+                                </div>
+                                <div class="booking-info-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <strong>Location:</strong> ${booking.location}
+                                </div>
+                                ${booking.end_date ? `
+                                <div class="booking-info-item">
+                                    <i class="fas fa-calendar-check"></i>
+                                    <strong>End Date:</strong> ${booking.end_date}
+                                </div>
+                                ` : ''}
+                                ${booking.contact ? `
+                                <div class="booking-info-item">
+                                    <i class="fas fa-phone"></i>
+                                    <strong>Contact:</strong> ${booking.contact}
+                                </div>
+                                ` : ''}
+                                ${booking.specialization ? `
+                                <div class="booking-info-item">
+                                    <i class="fas fa-star"></i>
+                                    <strong>Specialization:</strong> ${booking.specialization}
+                                </div>
+                                ` : ''}
+                                ${booking.experience ? `
+                                <div class="booking-info-item">
+                                    <i class="fas fa-award"></i>
+                                    <strong>Experience:</strong> ${booking.experience} years
+                                </div>
+                                ` : ''}
+                            </div>
+                            
+                            <div class="booking-footer">
+                                ${booking.total_cost ? `
+                                <div class="total-cost">
+                                    <i class="fas fa-calculator"></i>
+                                    <span>Total: ₹${booking.total_cost}</span>
+                                </div>
+                                ` : '<div></div>'}
+                                <span class="status-badge status-${booking.status}">
+                                    ${booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+                            ${booking.work_type || booking.field_size ? `
+                            <div class="mt-4 pt-4 border-t border-gray-200">
+                                <h4 class="font-semibold text-gray-700 mb-2">Booking Details:</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-600">
+                                    ${booking.work_type ? `
+                                    <div class="flex items-center">
+                                        <i class="fas fa-tasks mr-2 text-green-600"></i>
+                                        <span><strong>Work Type:</strong> ${booking.work_type}</span>
+                                    </div>
+                                    ` : ''}
+                                    ${booking.field_size ? `
+                                    <div class="flex items-center">
+                                        <i class="fas fa-expand-arrows-alt mr-2 text-green-600"></i>
+                                        <span><strong>Field Size:</strong> ${booking.field_size} acres</span>
+                                    </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            ` : ''}
+
+                            ${booking.payment_method ? `
+                            <div class="mt-4 pt-4 border-t border-gray-200">
+                                <div class="flex justify-between items-center">
+                                    <div class="text-sm text-gray-600">
+                                        <i class="fas fa-credit-card mr-2 text-green-600"></i>
+                                        <strong>Payment:</strong> ${booking.payment_method === 'razorpay' ? 'Online Payment' : 'Pay on Delivery'}
+                                    </div>
+                                    ${booking.created_at ? `
+                                    <div class="text-sm text-gray-500">
+                                        <i class="fas fa-clock mr-1"></i>
+                                        Booked: ${booking.created_at}
+                                    </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Function to filter bookings based on active tab
+        function filterBookings(type) {
+            // Update active tab
+            document.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[onclick="filterBookings('${type}')"]`).classList.add('active');
+
+            let filtered = allBookings;
+            if (type === 'equipment') {
+                filtered = allBookings.filter(booking => booking.type === 'Equipment');
+            } else if (type === 'operators' || type === 'operator') {
+                filtered = allBookings.filter(booking => booking.type === 'Operator');
+            }
+
+            renderBookings(filtered);
+        }
+
+        // Function to download unified PDF
+        async function downloadPDF(type = null) {
+            try {
+                let downloadBtn;
+                let pdfUrl = '';
+                let filename = '';
+
+                if (type === 'equipment') {
+                    downloadBtn = document.getElementById('download-equipment-pdf-btn');
+                    pdfUrl = 'http://127.0.0.1:5000/api/bookings/pdf?user_id=1';
+                    filename = `equipment_bookings_${new Date().toISOString().split('T')[0]}.pdf`;
+                } else if (type === 'operator') {
+                    downloadBtn = document.getElementById('download-operator-pdf-btn');
+                    pdfUrl = 'http://127.0.0.1:5000/api/operator-bookings/pdf?user_id=1';
+                    filename = `operator_bookings_${new Date().toISOString().split('T')[0]}.pdf`;
+                } else {
+                    // Default unified download button
+                    downloadBtn = document.getElementById('download-pdf-btn');
+                    if (!downloadBtn) return;
+
+                    // Check which tab is active and download corresponding PDF
+                    const activeTab = document.querySelector('.filter-tab.active').textContent.trim();
+
+                    if (activeTab.includes('Equipment') || activeTab.includes('ಉಪಕರಣ')) {
+                        pdfUrl = 'http://127.0.0.1:5000/api/bookings/pdf?user_id=1';
+                        filename = `equipment_bookings_${new Date().toISOString().split('T')[0]}.pdf`;
+                    } else if (activeTab.includes('Operators') || activeTab.includes('ನಿರ್ವಾಹಕರು')) {
+                        pdfUrl = 'http://127.0.0.1:5000/api/operator-bookings/pdf?user_id=1';
+                        filename = `operator_bookings_${new Date().toISOString().split('T')[0]}.pdf`;
+                    } else {
+                        // All bookings - default to operator bookings as they have more data
+                        pdfUrl = 'http://127.0.0.1:5000/api/operator-bookings/pdf?user_id=1';
+                        filename = `all_bookings_${new Date().toISOString().split('T')[0]}.pdf`;
+                    }
+                }
+
+                if (!downloadBtn) return;
+
+                const originalText = downloadBtn.innerHTML;
+                
+                // Show loading state
+                downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Generating PDF...</span>';
+                downloadBtn.disabled = true;
+
+                const response = await fetch(pdfUrl);
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    
+                    // Show success message
+                    downloadBtn.innerHTML = '<i class="fas fa-check"></i> <span>Downloaded!</span>';
+                    setTimeout(() => {
+                        downloadBtn.innerHTML = originalText;
+                        downloadBtn.disabled = false;
+                    }, 2000);
+                } else {
+                    throw new Error('Failed to generate PDF');
+                }
+            } catch (error) {
+                console.error('Error downloading PDF:', error);
+                alert('Failed to download PDF. Please try again.');
+                if (downloadBtn) {
+                    downloadBtn.innerHTML = originalText || '<i class="fas fa-download"></i> <span>Download PDF</span>';
+                    downloadBtn.disabled = false;
+                }
+            }
+        }
+
+        // Legacy function for backward compatibility
+        async function downloadUnifiedPDF() {
+            return downloadPDF();
+        }
+
+        // Global variable to store all bookings
+        let allBookings = [];
+
+        // Function to update all text content based on the language
+        const updateContent = (lang) => {
+            const langData = translations[lang];
+
+            // Update title
+            const titleElement = document.querySelector('title');
+            if (titleElement) {
+                const key = titleElement.getAttribute('data-key');
+                if (langData[key]) {
+                    titleElement.textContent = langData[key];
+                }
+            }
+
+            // Update all elements with data-key for textContent
+            const textElements = document.querySelectorAll('[data-key]:not(input):not(textarea):not(select):not(option)');
+            textElements.forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (langData[key]) {
+                    el.textContent = langData[key];
+                }
+            });
+
+            // Update placeholders with data-key-placeholder
+            const placeholders = document.querySelectorAll('[data-key-placeholder]');
+            placeholders.forEach(el => {
+                const key = el.getAttribute('data-key-placeholder');
+                if (langData[key]) {
+                    el.placeholder = langData[key];
+                }
+            });
+
+            // Update select options with data-key
+            const selectOptions = document.querySelectorAll('select option[data-key]');
+            selectOptions.forEach(option => {
+                const key = option.getAttribute('data-key');
+                if (langData[key]) {
+                    option.textContent = langData[key];
+                }
+            });
+
+            // Special handling for elements with nested spans (like the page title)
+            const pageTitleElement = document.getElementById('page-title');
+            if (pageTitleElement) {
+                const mainTitleSpan = pageTitleElement.querySelector('span[data-key="main_title"]');
+                const kannadaSpan = pageTitleElement.querySelector('span[data-key="main_title_kn"]');
+                
+                if (mainTitleSpan && langData.main_title) {
+                    mainTitleSpan.textContent = langData.main_title;
+                }
+                if (kannadaSpan && langData.main_title_kn) {
+                    kannadaSpan.textContent = langData.main_title_kn;
+                }
+            }
+            
+            // Update nav links
+            const navLinks = document.querySelectorAll('.desktop-nav a, .mobile-nav-menu a');
+            navLinks.forEach(link => {
+                const key = link.getAttribute('data-key');
+                if (langData[key]) {
+                    link.textContent = langData[key];
+                }
+            });
+            
+            // Update user dropdown links
+            const userLinks = document.querySelectorAll('.user-dropdown-link span');
+            userLinks.forEach(span => {
+                const key = span.getAttribute('data-key');
+                if (langData[key]) {
+                    span.textContent = langData[key];
+                }
+            });
+
+            renderBookingCards(lang);
+        };
+
+        // Function to switch language
+        const switchLanguage = (lang) => {
+            currentLang = lang;
+            updateContent(lang);
+
+            const langEnBtn = document.getElementById('lang-en');
+            const langKnBtn = document.getElementById('lang-kn');
+
+            if (langEnBtn) langEnBtn.classList.remove('active');
+            if (langKnBtn) langKnBtn.classList.remove('active');
+            if (lang === 'en' && langEnBtn) {
+                langEnBtn.classList.add('active');
+                document.documentElement.lang = 'en';
+            } else if (lang === 'kn' && langKnBtn) {
+                langKnBtn.classList.add('active');
+                document.documentElement.lang = 'kn';
+            }
+        };
+
+        // Render functions for dynamic content
+        const renderBookingCards = (lang) => {
+            const grid = document.getElementById('booking-grid');
+            if (!grid) return;
+            
+            grid.innerHTML = '';
+            if (bookingData.length === 0) {
+                grid.innerHTML = `<div class="no-bookings-message hidden" data-key="no_bookings_text">${translations[lang].no_bookings_text}</div>`;
+                document.getElementById('no-bookings-message').classList.remove('hidden');
+                return;
+            }
+
+            bookingData.forEach(item => {
+                const card = document.createElement('div');
+                card.classList.add('booking-card');
+                let statusClass = '';
+                let statusTextKey = '';
+                if (item.status === 'completed') {
+                    statusClass = 'status-completed';
+                    statusTextKey = 'status_completed';
+                } else if (item.status === 'ongoing') {
+                    statusClass = 'status-ongoing';
+                    statusTextKey = 'status_ongoing';
+                } else {
+                    statusClass = 'status-cancelled';
+                    statusTextKey = 'status_cancelled';
+                }
+
+                card.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" class="booking-image">
+                    <div class="booking-content">
+                        <h3><span data-key="booking_equipment_name">${translations[lang].booking_equipment_name}</span> - ${item.name}</h3>
+                        <p><i class="fas fa-tag"></i> <span data-key="booking_equipment_type">${translations[lang].booking_equipment_type}:</span> ${item.type}</p>
+                        <p><i class="fas fa-calendar"></i> <span data-key="booking_date">${translations[lang].booking_date}:</span> ${item.date}</p>
+                        <p><i class="fas fa-hourglass-half"></i> <span data-key="booking_duration">${translations[lang].booking_duration}:</span> ${item.duration}</p>
+                        <p><i class="fas fa-money-bill-wave"></i> <span data-key="booking_price">${translations[lang].booking_price}:</span> ${item.price}</p>
+                        <p><i class="fas fa-map-marker-alt"></i> <span data-key="booking_location">${translations[lang].booking_location}:</span> ${item.location}</p>
+                        <span class="status-label ${statusClass}" data-key="${statusTextKey}">${translations[lang][statusTextKey]}</span>
+                        <button class="view-details-btn" data-key="view_details_btn">${translations[lang].view_details_btn}</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        };
+
+        // Onload function
+        window.onload = async function() {
+            // Set initial language to English on load
+            switchLanguage('en');
+
+            // Force set sessionStorage for testing
+            if (!sessionStorage.getItem('user_id')) {
+                console.log('No user_id in sessionStorage, setting default for testing');
+                sessionStorage.setItem('user_id', '4');
+                sessionStorage.setItem('username', 'guru@gmail.com');
+                sessionStorage.setItem('user_email', 'guru@gmail.com');
+            }
+
+            // Debug sessionStorage
+            console.log('=== PAGE LOADED - STARTING DEBUG ===');
+            console.log('SessionStorage contents:');
+            console.log('user_id:', sessionStorage.getItem('user_id'));
+            console.log('username:', sessionStorage.getItem('username'));
+            console.log('user_email:', sessionStorage.getItem('user_email'));
+
+            // Fetch and load all bookings
+            await fetchAllBookings();
+            renderBookings(allBookings);
+
+            // Header and dropdown functionality
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileNav = document.getElementById('mobile-nav');
+            if (mobileMenuButton && mobileNav) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileNav.classList.toggle('hidden');
+                });
+            }
+
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userDropdown = document.getElementById('user-dropdown');
+            if (userMenuButton && userDropdown) {
+                userMenuButton.addEventListener('click', (event) => {
+                    userDropdown.classList.toggle('hidden');
+                    event.stopPropagation();
+                });
+            }
+
+            document.addEventListener('click', (event) => {
+                if (userDropdown && !userDropdown.contains(event.target) && !userMenuButton.contains(event.target)) {
+                    userDropdown.classList.add('hidden');
+                }
+            });
+
+            // Language Switcher
+            const langEnBtn = document.getElementById('lang-en');
+            if (langEnBtn) {
+                 langEnBtn.addEventListener('click', () => switchLanguage('en'));
+            }
+            const langKnBtn = document.getElementById('lang-kn');
+            if (langKnBtn) {
+                 langKnBtn.addEventListener('click', () => switchLanguage('kn'));
+            }
+        };
+    </script>
+    
+    <!-- Simple Booking History Loader -->
+    <script>
+        // Force load bookings immediately
+        console.log('=== IMMEDIATE BOOKING LOADER ===');
+        
+        fetch('http://127.0.0.1:5000/api/bookings?user_id=4')
+        .then(response => {
+            console.log('Response status:', response.status);
+            return response.json();
+        })
+        .then(bookings => {
+            console.log('Bookings received:', bookings);
+            
+            if (bookings && bookings.length > 0) {
+                console.log('Found', bookings.length, 'bookings. Displaying...');
+                
+                // Find the container
+                const container = document.getElementById('equipment-bookings') || document.querySelector('.bookings-grid') || document.body;
+                
+                let html = '<h2>Your Booking History (' + bookings.length + ' bookings)</h2>';
+                
+                bookings.forEach(booking => {
+                    html += '<div style="border: 2px solid #28a745; margin: 10px 0; padding: 15px; background: #f8f9fa;">';
+                    html += '<h3 style="color: #28a745;">' + booking.equipment_name + '</h3>';
+                    html += '<p><strong>Date:</strong> ' + booking.start_date + ' to ' + booking.end_date + '</p>';
+                    html += '<p><strong>Location:</strong> ' + (booking.equipment_location || 'N/A') + '</p>';
+                    html += '<p><strong>Amount:</strong> ₹' + booking.total_cost + '</p>';
+                    html += '<p><strong>Status:</strong> ' + booking.status + '</p>';
+                    html += '<p><strong>Payment Method:</strong> ' + booking.payment_method + '</p>';
+                    html += '</div>';
+                });
+                
+                container.innerHTML = html;
+                
+            } else {
+                console.log('No bookings found');
+                const container = document.getElementById('equipment-bookings') || document.querySelector('.bookings-grid') || document.body;
+                container.innerHTML = '<h2>No bookings found</h2><p>You haven\'t made any bookings yet.</p>';
+            }
+        })
+        .catch(error => {
+            console.error('Error loading bookings:', error);
+            const container = document.getElementById('equipment-bookings') || document.querySelector('.bookings-grid') || document.body;
+            container.innerHTML = '<h2>Error loading bookings</h2><p>Failed to load booking history: ' + error.message + '</p>';
+        });
+    </script>
+</body>
+</html>
